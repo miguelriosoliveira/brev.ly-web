@@ -28,26 +28,20 @@
   --text-xl--line-height: 2rem;
 }
 
-@layer utilities {
-  .text-xs-uppercase {
-    @apply text-xs uppercase;
-  }
+@utility text-xs-uppercase {
+  @apply text-xs uppercase;
+}
+@utility text-sm-semibold {
+  @apply text-sm font-semibold;
+}
 
-  /* .text-sm-regular it not needed */
+@utility text-base-semibold {
+  @apply text-base font-semibold;
+}
+@utility text-xl-bold {
+  @apply text-xl font-bold;
+}
 
-  .text-sm-semibold {
-    @apply text-sm font-semibold;
-  }
-
-  .text-base-semibold {
-    @apply text-base font-semibold;
-  }
-
-  .text-lg-bold {
-    @apply text-lg font-bold;
-  }
-
-  .text-xl-bold {
-    @apply text-xl font-bold;
-  }
+@utility text-lg-bold {
+  @apply text-lg font-bold;
 }
