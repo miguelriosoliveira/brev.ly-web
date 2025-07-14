@@ -9,25 +9,38 @@ export function App() {
       <img aria-label="Brev.ly logo" className="h-7" src={logoIconUrl} />
 
       <div className="flex w-full flex-col gap-3">
-        <div className="rounded-lg bg-gray-100 p-6">
+        <div className="flex flex-col gap-5 rounded-lg bg-gray-100 p-6">
           <h2 className="text-lg-bold">Novo link</h2>
 
-          <form>
-            <label className="text-xs-uppercase" htmlFor="original_link">
-              Link original
-            </label>
-            <input
-              name="original_link"
-              placeholder="www.exemplo.com.br"
-              type="url"
-            />
+          <form className="flex flex-col gap-5">
+            <div className="flex flex-col gap-4">
+              <label className="flex flex-col gap-2 text-xs-uppercase">
+                Link original
+                <input
+                  className="rounded-lg px-4 py-3.5 text-gray-600 outline outline-gray-300 placeholder:text-gray-400"
+                  name="original_link"
+                  placeholder="www.exemplo.com.br"
+                  type="url"
+                />
+              </label>
 
-            <label className="text-xs-uppercase" htmlFor="short_link">
-              Link encurtado
-            </label>
-            <input name="short_link" placeholder="brev.ly/" type="url" />
+              <label className="flex flex-col gap-2 text-xs-uppercase">
+                Link encurtado
+                <input
+                  className="rounded-lg px-4 py-3.5 text-gray-600 outline outline-gray-300 placeholder:text-gray-400"
+                  name="short_link"
+                  placeholder="brev.ly/"
+                  type="url"
+                />
+              </label>
+            </div>
 
-            <button type="submit">Salvar link</button>
+            <button
+              className="rounded-lg bg-blue-base p-5 text-white"
+              type="submit"
+            >
+              Salvar link
+            </button>
           </form>
         </div>
 
