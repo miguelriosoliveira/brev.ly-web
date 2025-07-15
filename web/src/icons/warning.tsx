@@ -1,5 +1,10 @@
 import { WarningIcon } from '@phosphor-icons/react';
+import type { ComponentProps } from 'react';
 
-export function Warning() {
-  return <WarningIcon size={32} />;
+interface Props extends ComponentProps<typeof WarningIcon> {
+  size?: number;
+}
+
+export function Warning({ size = 32, ...props }: Props) {
+  return <WarningIcon size={size} {...props} />;
 }
