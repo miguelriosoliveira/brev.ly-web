@@ -17,7 +17,7 @@ export function App() {
               <label className="flex flex-col gap-2 text-xs-uppercase">
                 Link original
                 <input
-                  className="rounded-lg px-4 py-3.5 text-gray-600 outline outline-gray-300 placeholder:text-gray-400"
+                  className="rounded-lg px-4 py-3.5 text-base text-gray-600 outline outline-gray-300 placeholder:text-gray-400"
                   name="original_link"
                   placeholder="www.exemplo.com.br"
                   type="url"
@@ -27,7 +27,7 @@ export function App() {
               <label className="flex flex-col gap-2 text-xs-uppercase">
                 Link encurtado
                 <input
-                  className="rounded-lg px-4 py-3.5 text-gray-600 outline outline-gray-300 placeholder:text-gray-400"
+                  className="rounded-lg px-4 py-3.5 text-base text-gray-600 outline outline-gray-300 placeholder:text-gray-400"
                   name="short_link"
                   placeholder="brev.ly/"
                   type="url"
@@ -36,7 +36,8 @@ export function App() {
             </div>
 
             <button
-              className="rounded-lg bg-blue-base p-5 text-white"
+              className="rounded-lg bg-blue-base p-5 text-base text-white transition disabled:opacity-50"
+              disabled
               type="submit"
             >
               Salvar link
@@ -44,19 +45,26 @@ export function App() {
           </form>
         </div>
 
-        <div className="rounded-lg bg-gray-100 p-6">
-          <h2 className="text-lg-bold">Meus links</h2>
-          <button disabled type="button">
-            <Download />
-            Baixar CSV
-          </button>
+        <div className="flex flex-col gap-4 rounded-lg bg-gray-100 p-6">
+          <header className="flex justify-between">
+            <h2 className="text-lg-bold">Meus links</h2>
 
-          <hr />
+            <button
+              className="flex gap-1.5 rounded-sm bg-gray-200 p-2 text-base text-base-semibold text-gray-500 disabled:opacity-50"
+              disabled
+              type="button"
+            >
+              <Download size={16} weight="bold" />
+              Baixar CSV
+            </button>
+          </header>
 
-          <Link />
-          <span className="text-xs-uppercase">
-            Ainda não existem links cadastrados
-          </span>
+          <main className="flex flex-col items-center justify-center gap-3 border-gray-200 border-t p-6 text-gray-500">
+            <Link className="text-gray-400" />
+            <span className="text-xs-uppercase">
+              Ainda não existem links cadastrados
+            </span>
+          </main>
         </div>
       </div>
     </div>
