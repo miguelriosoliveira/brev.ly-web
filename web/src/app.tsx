@@ -55,11 +55,12 @@ export function App() {
 
               <FormField
                 errorMessage="Informe uma url minúscula e sem espaço/caracter especial."
+                fixedPlaceholder
                 hasError={!!errors.original_link}
                 id="short_link"
                 label="Link encurtado"
                 placeholder="brev.ly/"
-                type="url"
+                type="text"
                 {...register('short_link', { required: true })}
               />
             </div>
