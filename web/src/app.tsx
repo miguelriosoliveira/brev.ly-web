@@ -25,8 +25,15 @@ export function App() {
     formState: { errors },
   } = useForm<Inputs>();
 
-  const onSubmit: SubmitHandler<Inputs> = data => {
-    console.log(data);
+  const onSubmit: SubmitHandler<Inputs> = ({ original_link, short_link }) => {
+    setLinks(state => [
+      ...state,
+      {
+        originalLink: original_link,
+        shortLink: short_link,
+        accessCount: 0,
+      },
+    ]);
   };
 
   return (
