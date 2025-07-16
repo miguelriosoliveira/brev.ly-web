@@ -99,7 +99,7 @@ export function App() {
             {links.length > 0 ? (
               links.map(link => (
                 <Link key={link.shortLink} to={link.shortLink}>
-                  {link.shortLink}
+                  brev.ly/{link.shortLink}
                 </Link>
               ))
             ) : (
