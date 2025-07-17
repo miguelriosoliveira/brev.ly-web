@@ -3,8 +3,10 @@ import { type SubmitHandler, useForm } from 'react-hook-form';
 import { Link } from 'react-router';
 import logoIconUrl from './assets/logo.svg';
 import { FormField } from './components/form-field';
+import { Copy } from './icons/copy';
 import { Download } from './icons/download';
 import { Link as LinkIcon } from './icons/link';
+import { Trash } from './icons/trash';
 
 type ShortenedLink = {
   originalLink: string;
@@ -90,17 +92,51 @@ export function App() {
               disabled={links.length === 0}
               type="button"
             >
-              <Download className="text-gray-600" size={16} weight="bold" />
+              <Download className="text-gray-600" size={16} />
               Baixar CSV
             </button>
           </header>
 
-          <main className="flex flex-col items-center justify-center gap-3 border-gray-200 border-t p-6 text-gray-500">
+          <main className="flex flex-col items-center justify-center gap-3 border-gray-200 border-t pt-3.5 text-gray-500">
             {links.length > 0 ? (
               links.map(link => (
-                <Link key={link.shortLink} to={link.shortLink}>
-                  brev.ly/{link.shortLink}
-                </Link>
+                <div
+                  className="flex w-full items-center justify-between"
+                  key={link.shortLink}
+                >
+                  <div className="flex flex-col">
+                    <Link
+                      className="text-base-semibold text-blue-base"
+                      to={link.shortLink}
+                    >
+                      brev.ly/{link.shortLink}
+                    </Link>
+                    <span className="text-sm">{link.originalLink}</span>
+                  </div>
+
+                  <div className="flex items-center gap-5">
+                    <span className="text-sm">
+                      {link.accessCount}{' '}
+                      {link.accessCount === 1 ? 'acesso' : 'acessos'}
+                    </span>
+
+                    <div className="flex gap-1">
+                      <button
+                        className="rounded-sm bg-gray-200 p-2 text-gray-600"
+                        type="button"
+                      >
+                        <Copy size={16} />
+                      </button>
+
+                      <button
+                        className="rounded-sm bg-gray-200 p-2 text-gray-600"
+                        type="button"
+                      >
+                        <Trash size={16} />
+                      </button>
+                    </div>
+                  </div>
+                </div>
               ))
             ) : (
               <>
