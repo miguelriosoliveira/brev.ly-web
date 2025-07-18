@@ -32,7 +32,7 @@ export function App() {
       ...state,
       {
         originalLink: original_link,
-        shortLink: short_link,
+        shortLink: `${window.location.host}/${short_link}`,
         accessCount: 0,
       },
     ]);
@@ -101,40 +101,38 @@ export function App() {
             {links.length > 0 ? (
               links.map(link => (
                 <div
-                  className="flex w-full items-center justify-between"
+                  className="flex w-full items-center justify-between gap-4"
                   key={link.shortLink}
                 >
-                  <div className="flex flex-col">
+                  <div className="flex flex-auto flex-col truncate">
                     <Link
                       className="text-base-semibold text-blue-base"
                       to={link.shortLink}
                     >
-                      brev.ly/{link.shortLink}
+                      {link.shortLink}
                     </Link>
                     <span className="text-sm">{link.originalLink}</span>
                   </div>
 
-                  <div className="flex items-center gap-5">
-                    <span className="text-sm">
-                      {link.accessCount}{' '}
-                      {link.accessCount === 1 ? 'acesso' : 'acessos'}
-                    </span>
+                  <span className="text-sm">
+                    {link.accessCount}{' '}
+                    {link.accessCount === 1 ? 'acesso' : 'acessos'}
+                  </span>
 
-                    <div className="flex gap-1">
-                      <button
-                        className="rounded-sm bg-gray-200 p-2 text-gray-600"
-                        type="button"
-                      >
-                        <Copy size={16} />
-                      </button>
+                  <div className="flex gap-1">
+                    <button
+                      className="rounded-sm bg-gray-200 p-2 text-gray-600"
+                      type="button"
+                    >
+                      <Copy size={16} />
+                    </button>
 
-                      <button
-                        className="rounded-sm bg-gray-200 p-2 text-gray-600"
-                        type="button"
-                      >
-                        <Trash size={16} />
-                      </button>
-                    </div>
+                    <button
+                      className="rounded-sm bg-gray-200 p-2 text-gray-600"
+                      type="button"
+                    >
+                      <Trash size={16} />
+                    </button>
                   </div>
                 </div>
               ))
