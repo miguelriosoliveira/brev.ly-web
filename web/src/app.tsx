@@ -104,17 +104,19 @@ export function App() {
                   className="flex w-full items-center justify-between gap-4"
                   key={link.shortLink}
                 >
-                  <div className="flex flex-auto flex-col truncate">
+                  <div className="flex flex-auto flex-col overflow-auto">
                     <Link
                       className="text-base-semibold text-blue-base"
                       to={link.shortLink}
                     >
                       {link.shortLink}
                     </Link>
-                    <span className="text-sm">{link.originalLink}</span>
+                    <span className="truncate text-sm">
+                      {link.originalLink}
+                    </span>
                   </div>
 
-                  <span className="text-sm">
+                  <span className="text-nowrap text-sm">
                     {link.accessCount}{' '}
                     {link.accessCount === 1 ? 'acesso' : 'acessos'}
                   </span>
