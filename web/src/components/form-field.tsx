@@ -18,7 +18,7 @@ export function FormField({
   return (
     <div className="flex flex-col gap-2">
       <label
-        className="flex flex-col gap-2 text-xs-uppercase"
+        className="flex flex-col gap-2 font-xs-uppercase"
         htmlFor={inputProps.id}
       >
         {label}

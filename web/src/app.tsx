@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { type SubmitHandler, useForm } from 'react-hook-form';
 import { Link } from 'react-router';
 import logoIconUrl from './assets/logo.svg';
+import { Button } from './components/button';
 import { FormField } from './components/form-field';
 import { Copy } from './icons/copy';
 import { Download } from './icons/download';
@@ -45,7 +46,7 @@ export function App() {
 
       <div className="flex w-full flex-col gap-3">
         <div className="flex flex-col gap-5 rounded-lg bg-gray-100 p-6">
-          <h2 className="text-lg-bold">Novo link</h2>
+          <h2 className="font-lg-bold">Novo link</h2>
 
           <form
             className="flex flex-col gap-5"
@@ -74,27 +75,18 @@ export function App() {
               />
             </div>
 
-            <button
-              className="rounded-lg bg-blue-base p-5 text-base text-white transition disabled:opacity-50"
-              type="submit"
-            >
-              Salvar link
-            </button>
+            <Button type="submit">Salvar link</Button>
           </form>
         </div>
 
         <div className="flex flex-col gap-4 rounded-lg bg-gray-100 p-6">
           <header className="flex justify-between">
-            <h2 className="text-lg-bold">Meus links</h2>
+            <h2 className="font-lg-bold">Meus links</h2>
 
-            <button
-              className="flex items-center gap-1.5 rounded-sm bg-gray-200 p-2 text-base text-base-semibold text-gray-500 disabled:opacity-50"
-              disabled={links.length === 0}
-              type="button"
-            >
+            <Button disabled={links.length === 0} variant="secondary">
               <Download className="text-gray-600" size={16} />
               Baixar CSV
-            </button>
+            </Button>
           </header>
 
           <main className="flex flex-col items-center justify-center gap-3 border-gray-200 border-t pt-3.5 text-gray-500">
@@ -106,7 +98,7 @@ export function App() {
                 >
                   <div className="flex flex-auto flex-col overflow-auto">
                     <Link
-                      className="text-base-semibold text-blue-base"
+                      className="truncate font-base-semibold text-blue-base"
                       to={link.shortLink}
                     >
                       {link.shortLink}
@@ -141,7 +133,7 @@ export function App() {
             ) : (
               <>
                 <LinkIcon className="text-gray-400" />
-                <span className="text-xs-uppercase">
+                <span className="font-xs-uppercase">
                   Ainda não existem links cadastrados
                 </span>
               </>

@@ -28,20 +28,20 @@
   --text-xl--line-height: 2rem;
 }
 
-@utility text-xs-uppercase {
+@utility font-xs-uppercase {
   @apply text-xs uppercase;
 }
-@utility text-sm-semibold {
+@utility font-sm-semibold {
   @apply text-sm font-semibold;
 }
 
-@utility text-base-semibold {
+@utility font-base-semibold {
   @apply text-base font-semibold;
 }
-@utility text-xl-bold {
+@utility font-xl-bold {
   @apply text-xl font-bold;
 }
 
-@utility text-lg-bold {
+@utility font-lg-bold {
   @apply text-lg font-bold;
 }
