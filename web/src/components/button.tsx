@@ -5,7 +5,7 @@ export interface Props extends ComponentProps<'button'> {
   variant?: 'primary' | 'secondary';
 }
 
-const button = tv({
+const variants = tv({
   base: 'flex cursor-pointer items-center justify-center gap-1.5 p-2 text-base transition disabled:cursor-not-allowed disabled:opacity-50',
   variants: {
     color: {
@@ -25,7 +25,7 @@ export function Button({
   ...props
 }: Props) {
   return (
-    <button className={button({ color: variant })} type={type} {...props}>
+    <button className={variants({ color: variant })} type={type} {...props}>
       {children}
     </button>
   );

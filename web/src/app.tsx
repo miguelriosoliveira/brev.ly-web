@@ -1,13 +1,11 @@
 import { useState } from 'react';
 import { type SubmitHandler, useForm } from 'react-hook-form';
-import { Link } from 'react-router';
 import logoIconUrl from './assets/logo.svg';
 import { Button } from './components/button';
 import { FormField } from './components/form-field';
-import { Copy } from './icons/copy';
+import { LinkItem } from './components/link-item';
 import { Download } from './icons/download';
 import { Link as LinkIcon } from './icons/link';
-import { Trash } from './icons/trash';
 
 type ShortenedLink = {
   originalLink: string;
@@ -89,54 +87,23 @@ export function App() {
             </Button>
           </header>
 
-          <main className="flex flex-col items-center justify-center gap-3 border-gray-200 border-t pt-3.5 text-gray-500">
+          <main className="flex flex-col items-center justify-center text-gray-500">
             {links.length > 0 ? (
               links.map(link => (
-                <div
-                  className="flex w-full items-center justify-between gap-4"
+                <LinkItem
+                  accessCount={link.accessCount}
                   key={link.shortLink}
-                >
-                  <div className="flex flex-auto flex-col overflow-auto">
-                    <Link
-                      className="truncate font-base-semibold text-blue-base"
-                      to={link.shortLink}
-                    >
-                      {link.shortLink}
-                    </Link>
-                    <span className="truncate text-sm">
-                      {link.originalLink}
-                    </span>
-                  </div>
-
-                  <span className="text-nowrap text-sm">
-                    {link.accessCount}{' '}
-                    {link.accessCount === 1 ? 'acesso' : 'acessos'}
-                  </span>
-
-                  <div className="flex gap-1">
-                    <button
-                      className="rounded-sm bg-gray-200 p-2 text-gray-600"
-                      type="button"
-                    >
-                      <Copy size={16} />
-                    </button>
-
-                    <button
-                      className="rounded-sm bg-gray-200 p-2 text-gray-600"
-                      type="button"
-                    >
-                      <Trash size={16} />
-                    </button>
-                  </div>
-                </div>
+                  originalLink={link.originalLink}
+                  shortLink={link.shortLink}
+                />
               ))
             ) : (
-              <>
+              <div className="w-full place-items-center border-gray-200 border-t pt-5 text-center">
                 <LinkIcon className="text-gray-400" />
                 <span className="font-xs-uppercase">
                   Ainda não existem links cadastrados
                 </span>
-              </>
+              </div>
             )}
           </main>
         </div>
