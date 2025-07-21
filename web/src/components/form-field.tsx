@@ -16,16 +16,16 @@ export function FormField({
   ...inputProps
 }: Props) {
   return (
-    <div className="flex flex-col gap-2">
+    <div className="group flex flex-col gap-2">
       <label
-        className="flex flex-col gap-2 font-xs-uppercase"
+        className="flex flex-col gap-2 font-xs-uppercase group-focus-within:font-semibold group-focus-within:text-blue-base"
         htmlFor={inputProps.id}
       >
         {label}
       </label>
 
       <input
-        className="w-full rounded-lg px-4 py-3.5 text-base text-gray-600 outline outline-gray-300 placeholder:text-gray-400 data-[fixedplaceholder=true]:pl-16"
+        className="w-full rounded-lg px-4 py-3.5 text-base text-gray-600 caret-blue-base outline outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:outline-blue-base focus:placeholder:opacity-0 data-[fixedplaceholder=true]:pl-16"
         data-fixedplaceholder={fixedPlaceholder}
         {...inputProps}
         placeholder={fixedPlaceholder ? undefined : inputProps.placeholder}
