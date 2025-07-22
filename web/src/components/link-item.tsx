@@ -1,3 +1,4 @@
+import type { MouseEvent } from 'react';
 import { Link } from 'react-router';
 import { Copy } from '../icons/copy';
 import { Trash } from '../icons/trash';
@@ -7,9 +8,29 @@ type Props = {
   shortLink: string;
   originalLink: string;
   accessCount: number;
+  onDelete: (shortLink: string) => void;
 };
 
-export function LinkItem({ shortLink, originalLink, accessCount }: Props) {
+export function LinkItem({
+  shortLink,
+  originalLink,
+  accessCount,
+  onDelete,
+}: Props) {
+  const fullShortLink = `${window.location.host}/${shortLink}`;
+
+  function handleClipboard(event: MouseEvent) {
+    event.preventDefault();
+    navigator.clipboard.writeText(fullShortLink);
+  }
+
+  function handleDelete(event: MouseEvent) {
+    event.preventDefault();
+    if (confirm(`Você realmente quer apagar o link ${shortLink}?`)) {
+      onDelete(shortLink);
+    }
+  }
+
   return (
     <div
       className="flex w-full items-center justify-between gap-4 border-gray-200 border-t py-4"
@@ -18,9 +39,9 @@ export function LinkItem({ shortLink, originalLink, accessCount }: Props) {
       <div className="flex flex-auto flex-col overflow-auto">
         <Link
           className="truncate font-base-semibold text-blue-base"
-          to={shortLink}
+          to={fullShortLink}
         >
-          {shortLink}
+          {fullShortLink}
         </Link>
         <span className="truncate text-sm">{originalLink}</span>
       </div>
@@ -30,11 +51,11 @@ export function LinkItem({ shortLink, originalLink, accessCount }: Props) {
       </span>
 
       <div className="flex gap-1">
-        <IconButton>
+        <IconButton onClick={handleClipboard}>
           <Copy size={16} />
         </IconButton>
 
-        <IconButton>
+        <IconButton onClick={handleDelete}>
           <Trash size={16} />
         </IconButton>
       </div>

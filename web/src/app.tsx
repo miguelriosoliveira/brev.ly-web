@@ -6,6 +6,7 @@ import { FormField } from './components/form-field';
 import { LinkItem } from './components/link-item';
 import { Download } from './icons/download';
 import { Link as LinkIcon } from './icons/link';
+import { api } from './service/api';
 
 type ShortenedLink = {
   originalLink: string;
@@ -24,6 +25,7 @@ export function App() {
     register,
     handleSubmit,
     formState: { errors },
+    reset,
   } = useForm<Inputs>();
 
   const onSubmit: SubmitHandler<Inputs> = ({ original_link, short_link }) => {
@@ -31,11 +33,16 @@ export function App() {
       ...state,
       {
         originalLink: original_link,
-        shortLink: `${window.location.host}/${short_link}`,
+        shortLink: short_link,
         accessCount: 0,
       },
     ]);
+    reset();
   };
+
+  function handleDeleteLink(shortLink: string) {
+    api.deleteLink(shortLink);
+  }
 
   return (
     <div className="flex h-dvh flex-col items-center gap-6 px-3 py-8">
@@ -93,6 +100,7 @@ export function App() {
                 <LinkItem
                   accessCount={link.accessCount}
                   key={link.shortLink}
+                  onDelete={handleDeleteLink}
                   originalLink={link.originalLink}
                   shortLink={link.shortLink}
                 />
