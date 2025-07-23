@@ -25,23 +25,27 @@ export function App() {
     register,
     handleSubmit,
     formState: { errors },
-    reset,
+    reset: resetForm,
   } = useForm<Inputs>();
 
   const onSubmit: SubmitHandler<Inputs> = ({ original_link, short_link }) => {
+    const newLink = api.createLink({ original_link, short_link });
     setLinks(state => [
       ...state,
       {
-        originalLink: original_link,
-        shortLink: short_link,
-        accessCount: 0,
+        originalLink: newLink.original_link,
+        shortLink: newLink.short_link,
+        accessCount: newLink.access_count,
       },
     ]);
-    reset();
+    resetForm();
   };
 
   function handleDeleteLink(shortLink: string) {
-    api.deleteLink(shortLink);
+    const deletedShortLink = api.deleteLink(shortLink);
+    setLinks(state => [
+      ...state.filter(link => link.shortLink !== deletedShortLink),
+    ]);
   }
 
   return (
