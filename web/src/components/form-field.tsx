@@ -31,18 +31,18 @@ export function FormField({
         placeholder={fixedPlaceholder ? undefined : inputProps.placeholder}
       />
 
+      {fixedPlaceholder && (
+        <span className="absolute top-9 left-4 w-fit text-base text-gray-400">
+          {inputProps.placeholder}
+        </span>
+      )}
+
       {hasError && (
         <div className="flex items-center gap-2">
           <Warning className="text-danger" size={16} />
           <span className="text-gray-500 text-sm">{errorMessage}</span>
         </div>
       )}
-
-      {/* {fixedPlaceholder && (
-        <span className="absolute bottom-10 left-4 w-fit text-base text-gray-400">
-          {inputProps.placeholder}
-        </span>
-      )} */}
     </div>
   );
 }
