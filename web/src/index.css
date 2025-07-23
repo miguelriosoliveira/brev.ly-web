@@ -1,4 +1,5 @@
 @import 'tailwindcss';
+@plugin 'tailwind-scrollbar';
 
 @theme {
   --color-blue-base: #2c46b1;

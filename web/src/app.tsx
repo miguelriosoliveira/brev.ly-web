@@ -20,7 +20,38 @@ type Inputs = {
 };
 
 export function App() {
-  const [links, setLinks] = useState<ShortenedLink[]>([]);
+  const [links, setLinks] = useState<ShortenedLink[]>([
+    {
+      originalLink: 'http://exemple.com',
+      shortLink: 'exemplo',
+      accessCount: 0,
+    },
+    {
+      originalLink: 'http://exemple.com',
+      shortLink: 'exemplo',
+      accessCount: 0,
+    },
+    {
+      originalLink: 'http://exemple.com',
+      shortLink: 'exemplo',
+      accessCount: 0,
+    },
+    {
+      originalLink: 'http://exemple.com',
+      shortLink: 'exemplo',
+      accessCount: 0,
+    },
+    {
+      originalLink: 'http://exemple.com',
+      shortLink: 'exemplo',
+      accessCount: 0,
+    },
+    {
+      originalLink: 'http://exemple.com',
+      shortLink: 'exemplo',
+      accessCount: 0,
+    },
+  ]);
   const {
     register,
     handleSubmit,
@@ -53,7 +84,7 @@ export function App() {
       {/** biome-ignore lint/performance/noImgElement: Not a Next project */}
       <img aria-label="Brev.ly logo" className="h-7" src={logoIconUrl} />
 
-      <div className="flex w-full flex-col gap-3">
+      <div className="flex w-full flex-col gap-3 overflow-hidden">
         <div className="flex flex-col gap-5 rounded-lg bg-gray-100 p-6">
           <h2 className="font-lg-bold">Novo link</h2>
 
@@ -88,7 +119,7 @@ export function App() {
           </form>
         </div>
 
-        <div className="flex flex-col gap-4 rounded-lg bg-gray-100 p-6">
+        <div className="flex flex-col gap-4 overflow-hidden rounded-lg bg-gray-100 p-6">
           <header className="flex justify-between">
             <h2 className="font-lg-bold">Meus links</h2>
 
@@ -98,7 +129,7 @@ export function App() {
             </Button>
           </header>
 
-          <main className="flex flex-col items-center justify-center text-gray-500">
+          <main className="scrollbar scrollbar-thumb-blue-base flex flex-col items-center justify-center overflow-auto text-gray-500">
             {links.length > 0 ? (
               links.map(link => (
                 <LinkItem
