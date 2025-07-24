@@ -24,7 +24,7 @@ export function App() {
     {
       originalLink: 'http://exemple.com',
       shortLink: 'exemplo',
-      accessCount: 5,
+      accessCount: 6,
     },
     {
       originalLink: 'http://exemple.com',
