@@ -7,6 +7,8 @@ import { LinkItem } from './components/link-item';
 import { Download } from './icons/download';
 import { Link as LinkIcon } from './icons/link';
 import { api } from './service/api';
+import { DuplicatedLinkError } from './errors/duplicated-link-error';
+import { toast, ToastContainer } from 'react-toastify';
 
 type ShortenedLink = {
   originalLink: string;
@@ -21,31 +23,31 @@ type Inputs = {
 
 export function App() {
   const [links, setLinks] = useState<ShortenedLink[]>([
-    {
-      originalLink: 'http://exemple.com',
-      shortLink: 'exemplo',
-      accessCount: 6,
-    },
-    {
-      originalLink: 'http://exemple.com',
-      shortLink: 'exemplo',
-      accessCount: 0,
-    },
-    {
-      originalLink: 'http://exemple.com',
-      shortLink: 'exemplo',
-      accessCount: 0,
-    },
-    {
-      originalLink: 'http://exemple.com',
-      shortLink: 'exemplo',
-      accessCount: 0,
-    },
-    {
-      originalLink: 'http://exemple.com',
-      shortLink: 'exemplo',
-      accessCount: 0,
-    },
+    // {
+    //   originalLink: 'http://exemple.com',
+    //   shortLink: 'exemplo',
+    //   accessCount: 1,
+    // },
+    // {
+    //   originalLink: 'http://exemple.com',
+    //   shortLink: 'exemplo',
+    //   accessCount: 0,
+    // },
+    // {
+    //   originalLink: 'http://exemple.com',
+    //   shortLink: 'exemplo',
+    //   accessCount: 0,
+    // },
+    // {
+    //   originalLink: 'http://exemple.com',
+    //   shortLink: 'exemplo',
+    //   accessCount: 0,
+    // },
+    // {
+    //   originalLink: 'http://exemple.com',
+    //   shortLink: 'exemplo',
+    //   accessCount: 0,
+    // },
   ]);
   const {
     register,
@@ -53,18 +55,39 @@ export function App() {
     formState: { errors },
     reset: resetForm,
   } = useForm<Inputs>();
+  const notifyError = (title: string, text: string) =>
+    toast.error(
+      <div className="flex flex-col">
+        <strong className="text-base">{title}</strong>
+        <span className="text-sm">{text}</span>
+      </div>,
+      {
+        position: 'bottom-right',
+        theme: 'colored',
+        hideProgressBar: true,
+        closeButton: false,
+      },
+    );
 
   const onSubmit: SubmitHandler<Inputs> = ({ original_link, short_link }) => {
-    const newLink = api.createLink({ original_link, short_link });
-    setLinks(state => [
-      ...state,
-      {
-        originalLink: newLink.original_link,
-        shortLink: newLink.short_link,
-        accessCount: newLink.access_count,
-      },
-    ]);
-    resetForm();
+    try {
+      const newLink = api.createLink({ original_link, short_link });
+      setLinks(state => [
+        ...state,
+        {
+          originalLink: newLink.original_link,
+          shortLink: newLink.short_link,
+          accessCount: newLink.access_count,
+        },
+      ]);
+      resetForm();
+    } catch (error: unknown) {
+      if (error instanceof DuplicatedLinkError) {
+        notifyError(error.title, error.message);
+      } else {
+        notifyError('Eita!', 'Erro desconhecido ao salvar link.');
+      }
+    }
   };
 
   function handleDeleteLink(shortLink: string) {
@@ -139,6 +162,8 @@ export function App() {
           </main>
         </div>
       </div>
+
+      <ToastContainer />
     </div>
   );
 }

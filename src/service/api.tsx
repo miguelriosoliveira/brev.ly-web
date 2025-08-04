@@ -1,3 +1,5 @@
+import { DuplicatedLinkError } from '../errors/duplicated-link-error';
+
 type ShortenedLink = {
   original_link: string;
   short_link: string;
@@ -14,7 +16,7 @@ type CreateLinkRequest = {
 export const api = {
   createLink({ original_link, short_link }: CreateLinkRequest): ShortenedLink {
     if (links.some(link => link.short_link === short_link)) {
-      throw new Error('link already exists!');
+      throw new DuplicatedLinkError();
     }
 
     const newLink: ShortenedLink = {

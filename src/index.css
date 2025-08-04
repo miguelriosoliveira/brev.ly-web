@@ -1,6 +1,11 @@
 @import 'tailwindcss';
 @plugin 'tailwind-scrollbar';
 
+:root {
+  --toastify-color-error: #efe9e9;
+  --toastify-text-color-error: var(--color-danger);
+}
+
 @theme {
   --color-blue-base: #2c46b1;
   --color-blue-dark: #2c4091;
