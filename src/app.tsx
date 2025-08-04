@@ -24,12 +24,7 @@ export function App() {
     {
       originalLink: 'http://exemple.com',
       shortLink: 'exemplo',
-      accessCount: 0,
-    },
-    {
-      originalLink: 'http://exemple.com',
-      shortLink: 'exemplo',
-      accessCount: 0,
+      accessCount: 6,
     },
     {
       originalLink: 'http://exemple.com',
@@ -74,9 +69,7 @@ export function App() {
 
   function handleDeleteLink(shortLink: string) {
     const deletedShortLink = api.deleteLink(shortLink);
-    setLinks(state => [
-      ...state.filter(link => link.shortLink !== deletedShortLink),
-    ]);
+    setLinks(state => [...state.filter(link => link.shortLink !== deletedShortLink)]);
   }
 
   return (
@@ -88,10 +81,7 @@ export function App() {
         <div className="flex flex-col gap-5 rounded-lg bg-gray-100 p-6">
           <h2 className="font-lg-bold">Novo link</h2>
 
-          <form
-            className="flex flex-col gap-5"
-            onSubmit={handleSubmit(onSubmit)}
-          >
+          <form className="flex flex-col gap-5" onSubmit={handleSubmit(onSubmit)}>
             <div className="flex flex-col gap-4">
               <FormField
                 errorMessage="Informe uma url válida."
@@ -143,9 +133,7 @@ export function App() {
             ) : (
               <div className="w-full place-items-center border-gray-200 border-t pt-5 text-center">
                 <LinkIcon className="text-gray-400" />
-                <span className="font-xs-uppercase">
-                  Ainda não existem links cadastrados
-                </span>
+                <span className="font-xs-uppercase">Ainda não existem links cadastrados</span>
               </div>
             )}
           </main>
