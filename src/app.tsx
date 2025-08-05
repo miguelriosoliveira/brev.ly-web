@@ -1,14 +1,16 @@
+import { zodResolver } from '@hookform/resolvers/zod';
 import { useState } from 'react';
 import { type SubmitHandler, useForm } from 'react-hook-form';
+import { ToastContainer, toast } from 'react-toastify';
+import { z } from 'zod';
 import logoIconUrl from './assets/logo.svg';
 import { Button } from './components/button';
 import { FormField } from './components/form-field';
 import { LinkItem } from './components/link-item';
+import { DuplicatedLinkError } from './errors/duplicated-link-error';
 import { Download } from './icons/download';
 import { Link as LinkIcon } from './icons/link';
 import { api } from './service/api';
-import { DuplicatedLinkError } from './errors/duplicated-link-error';
-import { toast, ToastContainer } from 'react-toastify';
 
 type ShortenedLink = {
   originalLink: string;
@@ -16,47 +18,24 @@ type ShortenedLink = {
   accessCount: number;
 };
 
-type Inputs = {
-  original_link: string;
-  short_link: string;
-};
+const formSchema = z.object({
+  original_link: z.url(),
+  short_link: z.string(),
+});
+
+type FormSchema = z.infer<typeof formSchema>;
 
 export function App() {
-  const [links, setLinks] = useState<ShortenedLink[]>([
-    // {
-    //   originalLink: 'http://exemple.com',
-    //   shortLink: 'exemplo',
-    //   accessCount: 1,
-    // },
-    // {
-    //   originalLink: 'http://exemple.com',
-    //   shortLink: 'exemplo',
-    //   accessCount: 0,
-    // },
-    // {
-    //   originalLink: 'http://exemple.com',
-    //   shortLink: 'exemplo',
-    //   accessCount: 0,
-    // },
-    // {
-    //   originalLink: 'http://exemple.com',
-    //   shortLink: 'exemplo',
-    //   accessCount: 0,
-    // },
-    // {
-    //   originalLink: 'http://exemple.com',
-    //   shortLink: 'exemplo',
-    //   accessCount: 0,
-    // },
-  ]);
+  const [links, setLinks] = useState<ShortenedLink[]>([]);
   const {
     register,
     handleSubmit,
     formState: { errors },
     reset: resetForm,
-  } = useForm<Inputs>();
-  const notifyError = (title: string, text: string) =>
-    toast.error(
+  } = useForm<FormSchema>({ resolver: zodResolver(formSchema) });
+
+  function notifyError(title: string, text: string) {
+    return toast.error(
       <div className="flex flex-col">
         <strong className="text-base">{title}</strong>
         <span className="text-sm">{text}</span>
@@ -68,8 +47,9 @@ export function App() {
         closeButton: false,
       },
     );
+  }
 
-  const onSubmit: SubmitHandler<Inputs> = ({ original_link, short_link }) => {
+  const onSubmit: SubmitHandler<FormSchema> = ({ original_link, short_link }) => {
     try {
       const newLink = api.createLink({ original_link, short_link });
       setLinks(state => [
@@ -91,8 +71,8 @@ export function App() {
   };
 
   function handleDeleteLink(shortLink: string) {
-    const deletedShortLink = api.deleteLink(shortLink);
-    setLinks(state => [...state.filter(link => link.shortLink !== deletedShortLink)]);
+    const deletedLink = api.deleteLink(shortLink);
+    setLinks(state => [...state.filter(link => link.shortLink !== deletedLink)]);
   }
 
   return (
@@ -119,7 +99,7 @@ export function App() {
               <FormField
                 errorMessage="Informe uma url minúscula e sem espaço/caracter especial."
                 fixedPlaceholder
-                hasError={!!errors.original_link}
+                hasError={!!errors.short_link}
                 id="short_link"
                 label="Link encurtado"
                 placeholder="brev.ly/"
