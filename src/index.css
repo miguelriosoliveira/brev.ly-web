@@ -2,6 +2,9 @@
 @plugin 'tailwind-scrollbar';
 
 :root {
+  --toastify-color-info: #cfdcec;
+  --toastify-text-color-info: var(--color-blue-base);
+
   --toastify-color-error: #efe9e9;
   --toastify-text-color-error: var(--color-danger);
 }

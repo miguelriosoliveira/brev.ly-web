@@ -1,7 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useState } from 'react';
 import { type SubmitHandler, useForm } from 'react-hook-form';
-import { ToastContainer, toast } from 'react-toastify';
+import { ToastContainer } from 'react-toastify';
 import { z } from 'zod';
 import logoIconUrl from './assets/logo.svg';
 import { Button } from './components/button';
@@ -11,6 +11,7 @@ import { DuplicatedLinkError } from './errors/duplicated-link-error';
 import { Download } from './icons/download';
 import { Link as LinkIcon } from './icons/link';
 import { api } from './service/api';
+import { notify } from './service/toast';
 
 type ShortenedLink = {
   originalLink: string;
@@ -34,21 +35,6 @@ export function App() {
     reset: resetForm,
   } = useForm<FormSchema>({ resolver: zodResolver(formSchema) });
 
-  function notifyError(title: string, text: string) {
-    return toast.error(
-      <div className="flex flex-col">
-        <strong className="text-base">{title}</strong>
-        <span className="text-sm">{text}</span>
-      </div>,
-      {
-        position: 'bottom-right',
-        theme: 'colored',
-        hideProgressBar: true,
-        closeButton: false,
-      },
-    );
-  }
-
   const onSubmit: SubmitHandler<FormSchema> = ({ original_link, short_link }) => {
     try {
       const newLink = api.createLink({ original_link, short_link });
@@ -63,12 +49,20 @@ export function App() {
       resetForm();
     } catch (error: unknown) {
       if (error instanceof DuplicatedLinkError) {
-        notifyError(error.title, error.message);
+        notify({ type: 'error', title: error.title, text: error.message });
       } else {
-        notifyError('Eita!', 'Erro desconhecido ao salvar link.');
+        notify({ type: 'error', title: 'Eita!', text: 'Erro desconhecido ao salvar link.' });
       }
     }
   };
+
+  function handleClipboard(shortLink: string) {
+    notify({
+      type: 'info',
+      title: 'Link copiado com sucesso',
+      text: `O link ${shortLink} foi copiado para a área de transferência`,
+    });
+  }
 
   function handleDeleteLink(shortLink: string) {
     const deletedLink = api.deleteLink(shortLink);
@@ -77,8 +71,9 @@ export function App() {
 
   return (
     <div className="flex h-dvh flex-col items-center gap-6 px-3 py-8">
-      {/** biome-ignore lint/performance/noImgElement: Not a Next project */}
-      <img aria-label="Brev.ly logo" className="h-7" src={logoIconUrl} />
+      <picture>
+        <img aria-label="Brev.ly logo" className="h-7" src={logoIconUrl} />
+      </picture>
 
       <div className="flex w-full flex-col gap-3 overflow-hidden">
         <div className="flex flex-col gap-5 rounded-lg bg-gray-100 p-6">
@@ -128,6 +123,7 @@ export function App() {
                 <LinkItem
                   accessCount={link.accessCount}
                   key={link.shortLink}
+                  onClipboard={handleClipboard}
                   onDelete={handleDeleteLink}
                   originalLink={link.originalLink}
                   shortLink={link.shortLink}

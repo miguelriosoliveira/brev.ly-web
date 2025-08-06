@@ -8,20 +8,17 @@ type Props = {
   shortLink: string;
   originalLink: string;
   accessCount: number;
+  onClipboard: (shortLink: string) => void;
   onDelete: (shortLink: string) => void;
 };
 
-export function LinkItem({
-  shortLink,
-  originalLink,
-  accessCount,
-  onDelete,
-}: Props) {
+export function LinkItem({ shortLink, originalLink, accessCount, onClipboard, onDelete }: Props) {
   const fullShortLink = `${window.location.host}/${shortLink}`;
 
   function handleClipboard(event: MouseEvent) {
     event.preventDefault();
     navigator.clipboard.writeText(fullShortLink);
+    onClipboard(shortLink);
   }
 
   function handleDelete(event: MouseEvent) {
@@ -37,10 +34,7 @@ export function LinkItem({
       key={shortLink}
     >
       <div className="flex flex-auto flex-col overflow-auto">
-        <Link
-          className="truncate font-base-semibold text-blue-base"
-          to={fullShortLink}
-        >
+        <Link className="truncate font-base-semibold text-blue-base" to={fullShortLink}>
           {fullShortLink}
         </Link>
         <span className="truncate text-sm">{originalLink}</span>
