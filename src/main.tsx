@@ -2,6 +2,7 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { BrowserRouter, Route, Routes } from 'react-router';
 import { IndexPage } from './pages/index';
+import { NotFoundPage } from './pages/not-found';
 import { RedirectPage } from './pages/redirect';
 import './index.css';
 
@@ -12,6 +13,7 @@ createRoot(document.getElementById('root')!).render(
       <Routes>
         <Route element={<IndexPage />} index />
         <Route element={<RedirectPage />} path="/:shortUrl" />
+        <Route element={<NotFoundPage />} path="/url/not-found" />
       </Routes>
     </BrowserRouter>
   </StrictMode>,
