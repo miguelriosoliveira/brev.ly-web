@@ -34,7 +34,11 @@ export function LinkItem({ shortLink, originalLink, accessCount, onClipboard, on
       key={shortLink}
     >
       <div className="flex flex-auto flex-col overflow-auto">
-        <Link className="truncate font-base-semibold text-blue-base" to={fullShortLink}>
+        <Link
+          className="truncate font-base-semibold text-blue-base"
+          target="_blank"
+          to={{ pathname: shortLink }}
+        >
           {fullShortLink}
         </Link>
         <span className="truncate text-sm">{originalLink}</span>

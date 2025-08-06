@@ -3,15 +3,15 @@ import { useState } from 'react';
 import { type SubmitHandler, useForm } from 'react-hook-form';
 import { ToastContainer } from 'react-toastify';
 import { z } from 'zod';
-import logoIconUrl from './assets/logo.svg';
-import { Button } from './components/button';
-import { FormField } from './components/form-field';
-import { LinkItem } from './components/link-item';
-import { DuplicatedLinkError } from './errors/duplicated-link-error';
-import { Download } from './icons/download';
-import { Link as LinkIcon } from './icons/link';
-import { api } from './service/api';
-import { notify } from './service/toast';
+import logoIconUrl from '../assets/logo.svg';
+import { Button } from '../components/button';
+import { FormField } from '../components/form-field';
+import { LinkItem } from '../components/link-item';
+import { DuplicatedLinkError } from '../errors/duplicated-link-error';
+import { Download } from '../icons/download';
+import { Link as LinkIcon } from '../icons/link';
+import { api } from '../service/api';
+import { notify } from '../service/toast';
 
 type ShortenedLink = {
   originalLink: string;
@@ -26,7 +26,7 @@ const formSchema = z.object({
 
 type FormSchema = z.infer<typeof formSchema>;
 
-export function App() {
+export function IndexPage() {
   const [links, setLinks] = useState<ShortenedLink[]>([]);
   const {
     register,
@@ -51,7 +51,11 @@ export function App() {
       if (error instanceof DuplicatedLinkError) {
         notify({ type: 'error', title: error.title, text: error.message });
       } else {
-        notify({ type: 'error', title: 'Eita!', text: 'Erro desconhecido ao salvar link.' });
+        notify({
+          type: 'error',
+          title: 'Eita!',
+          text: 'Erro desconhecido ao salvar link.',
+        });
       }
     }
   };
