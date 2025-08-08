@@ -1,3 +1,29 @@
+import { Link } from 'react-router';
+import notFoundStatusUrl from '../assets/404.svg';
+
 export function NotFoundPage() {
-  return <h1>404 page not found!!!!</h1>;
+  return (
+    <div className="flex h-full flex-col justify-center">
+      <div className="flex flex-col items-center gap-5 rounded-lg bg-gray-100 px-6 py-12">
+        <picture>
+          <img
+            aria-label="image containing the number 404"
+            className="h-20"
+            src={notFoundStatusUrl}
+          />
+        </picture>
+
+        <h2 className="font-xl-bold">Link não encontrado</h2>
+
+        <span className="text-center font-base-semibold text-gray-500">
+          O link que você está tentando acessar não existe, foi removido ou é uma URL inválida.
+          Saiba mais em{' '}
+          <Link className="text-blue-base underline" to="/">
+            brev.ly
+          </Link>
+          .
+        </span>
+      </div>
+    </div>
+  );
 }

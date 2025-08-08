@@ -10,11 +10,14 @@ import './index.css';
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <BrowserRouter>
-      <Routes>
-        <Route element={<IndexPage />} index />
-        <Route element={<RedirectPage />} path="/:shortUrl" />
-        <Route element={<NotFoundPage />} path="/url/not-found" />
-      </Routes>
+      <div className="h-dvh px-3 py-8">
+        <Routes>
+          <Route element={<IndexPage />} index />
+          <Route element={<RedirectPage />} path="/:shortUrl" />
+          <Route element={<NotFoundPage />} path="/url/not-found" />
+          <Route element={<NotFoundPage />} path="*" />
+        </Routes>
+      </div>
     </BrowserRouter>
   </StrictMode>,
 );
