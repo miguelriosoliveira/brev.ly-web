@@ -1,4 +1,5 @@
 import { DuplicatedLinkError } from '../errors/duplicated-link-error';
+import { LinkNotFoundError } from '../errors/link-not-found-error';
 
 type ShortenedLink = {
   original_link: string;
@@ -14,6 +15,16 @@ type CreateLinkRequest = {
 };
 
 export const api = {
+  getOriginalLink(shortLink: string): string {
+    const linkFound = links.find(link => link.short_link === shortLink);
+
+    if (!linkFound) {
+      throw new LinkNotFoundError();
+    }
+
+    return linkFound.original_link;
+  },
+
   createLink({ original_link, short_link }: CreateLinkRequest): ShortenedLink {
     if (links.some(link => link.short_link === short_link)) {
       throw new DuplicatedLinkError();

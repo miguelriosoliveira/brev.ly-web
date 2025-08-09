@@ -13,7 +13,7 @@ createRoot(document.getElementById('root')!).render(
       <div className="h-dvh px-3 py-8">
         <Routes>
           <Route element={<IndexPage />} index />
-          <Route element={<RedirectPage />} path="/:shortUrl" />
+          <Route element={<RedirectPage />} path="/:url-encurtada" />
           <Route element={<NotFoundPage />} path="/url/not-found" />
           <Route element={<NotFoundPage />} path="*" />
         </Routes>

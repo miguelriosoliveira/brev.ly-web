@@ -1,7 +1,22 @@
+import { useEffect, useState } from 'react';
 import { useParams } from 'react-router';
+import { api } from '../service/api';
 
 export function RedirectPage() {
-  const { shortUrl } = useParams();
+  const { 'url-encurtada': shortUrl } = useParams();
+  const [originalUrl, setOriginalUrl] = useState<string | null>(null);
 
-  return <h1>REDIRECTING TO {shortUrl}...</h1>;
+  useEffect(() => {
+    if (!shortUrl) {
+      return;
+    }
+    const originalLink = api.getOriginalLink(shortUrl);
+    setOriginalUrl(originalLink);
+  }, [shortUrl]);
+
+  return (
+    <h1>
+      the short url "{shortUrl}" should lead to the full url "{originalUrl}"
+    </h1>
+  );
 }
