@@ -1,11 +1,16 @@
+import z from 'zod';
 import { DuplicatedLinkError } from '../errors/duplicated-link-error';
 import { LinkNotFoundError } from '../errors/link-not-found-error';
 
-type ShortenedLink = {
-  original_link: string;
-  short_link: string;
-  access_count: number;
-};
+const linkSchema = z.object({
+  id: z.uuid(),
+  original_link: z.url(),
+  short_link: z.string(),
+  access_count: z.number(),
+  created_at: z.coerce.date(),
+});
+
+type ShortenedLink = z.infer<typeof linkSchema>;
 
 let links: ShortenedLink[] = [];
 
@@ -31,9 +36,11 @@ export const api = {
     }
 
     const newLink: ShortenedLink = {
+      id: crypto.randomUUID(),
       original_link,
       short_link,
       access_count: 0,
+      created_at: new Date(),
     };
     links = [...links, newLink];
 

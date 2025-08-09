@@ -1,8 +1,9 @@
 import { zodResolver } from '@hookform/resolvers/zod';
+import dayjs from 'dayjs';
 import { useState } from 'react';
 import { type SubmitHandler, useForm } from 'react-hook-form';
 import { ToastContainer } from 'react-toastify';
-import { z } from 'zod';
+import z from 'zod';
 import logoIconUrl from '../assets/logo.svg';
 import { Button } from '../components/button';
 import { FormField } from '../components/form-field';
@@ -14,9 +15,11 @@ import { api } from '../service/api';
 import { notify } from '../service/toast';
 
 type ShortenedLink = {
+  id: string;
   originalLink: string;
   shortLink: string;
   accessCount: number;
+  createdAt: Date;
 };
 
 const formSchema = z.object({
@@ -41,9 +44,11 @@ export function IndexPage() {
       setLinks(state => [
         ...state,
         {
+          id: newLink.id,
           originalLink: newLink.original_link,
           shortLink: newLink.short_link,
           accessCount: newLink.access_count,
+          createdAt: newLink.created_at,
         },
       ]);
       resetForm();
@@ -59,6 +64,36 @@ export function IndexPage() {
       }
     }
   };
+
+  function handleDownloadCsv() {
+    if (links.length === 0) {
+      return;
+    }
+
+    const csvRows = [
+      ['ID', 'Original URL', 'Short URL', 'Access Count', 'Created at'],
+      ...links.map(link => [
+        link.id,
+        link.originalLink,
+        link.shortLink,
+        link.accessCount,
+        dayjs(link.createdAt).format('YYYY-MM-DD HH:mm:ss.SSS'),
+      ]),
+    ]
+      .map(row => row.join(','))
+      .join('\n');
+
+    const blob = new Blob([csvRows], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'links.csv';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
 
   function handleClipboard(shortLink: string) {
     notify({
@@ -115,7 +150,7 @@ export function IndexPage() {
           <header className="flex justify-between">
             <h2 className="font-lg-bold">Meus links</h2>
 
-            <Button disabled={links.length === 0} variant="secondary">
+            <Button disabled={links.length === 0} onClick={handleDownloadCsv} variant="secondary">
               <Download className="text-gray-600" size={16} />
               Baixar CSV
             </Button>
