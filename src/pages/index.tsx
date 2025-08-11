@@ -2,7 +2,6 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import dayjs from 'dayjs';
 import { useState } from 'react';
 import { type SubmitHandler, useForm } from 'react-hook-form';
-import { ToastContainer } from 'react-toastify';
 import z from 'zod';
 import logoIconUrl from '../assets/logo.svg';
 import { Button } from '../components/button';
@@ -26,7 +25,7 @@ const formSchema = z.object({
   original_link: z.url('Informe uma url válida.'),
   short_link: z
     .string()
-    .min(1, 'URL encurtado não pode estar vazio.')
+    .min(1, 'URL encurtada não pode estar vazia.')
     .regex(
       /^[a-z0-9]+(?:-[a-z0-9]+)*$/,
       'Informe uma URL minúscula e sem espaço/caracter especial.',
@@ -181,8 +180,6 @@ export function IndexPage() {
           </main>
         </div>
       </div>
-
-      <ToastContainer />
     </div>
   );
 }

@@ -1,6 +1,7 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { BrowserRouter, Route, Routes } from 'react-router';
+import { ToastContainer } from 'react-toastify';
 import { IndexPage } from './pages/index';
 import { NotFoundPage } from './pages/not-found';
 import { RedirectPage } from './pages/redirect';
@@ -17,6 +18,7 @@ createRoot(document.getElementById('root')!).render(
           <Route element={<NotFoundPage />} path="/url/not-found" />
           <Route element={<NotFoundPage />} path="*" />
         </Routes>
+        <ToastContainer />
       </div>
     </BrowserRouter>
   </StrictMode>,
