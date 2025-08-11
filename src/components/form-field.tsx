@@ -1,20 +1,13 @@
-import type { InputHTMLAttributes } from 'react';
+import type { ComponentProps } from 'react';
 import { Warning } from '../icons/warning';
 
-interface Props extends InputHTMLAttributes<HTMLInputElement> {
+interface Props extends ComponentProps<'input'> {
   label: string;
   fixedPlaceholder?: boolean;
-  hasError: boolean;
-  errorMessage: string;
+  error?: string;
 }
 
-export function FormField({
-  label,
-  fixedPlaceholder = false,
-  hasError,
-  errorMessage,
-  ...inputProps
-}: Props) {
+export function FormField({ label, fixedPlaceholder = false, error, ...inputProps }: Props) {
   return (
     <div className="group relative">
       <label
@@ -37,10 +30,10 @@ export function FormField({
         </span>
       )}
 
-      {hasError && (
+      {!!error && (
         <div className="flex items-center gap-2">
           <Warning className="text-danger" size={16} />
-          <span className="text-gray-500 text-sm">{errorMessage}</span>
+          <span className="text-gray-500 text-sm">{error}</span>
         </div>
       )}
     </div>

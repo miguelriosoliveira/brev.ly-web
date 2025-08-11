@@ -23,8 +23,14 @@ type ShortenedLink = {
 };
 
 const formSchema = z.object({
-  original_link: z.url(),
-  short_link: z.string(),
+  original_link: z.url('Informe uma url válida.'),
+  short_link: z
+    .string()
+    .min(1, 'URL encurtado não pode estar vazio.')
+    .regex(
+      /^[a-z0-9]+(?:-[a-z0-9]+)*$/,
+      'Informe uma URL minúscula e sem espaço/caracter especial.',
+    ),
 });
 
 type FormSchema = z.infer<typeof formSchema>;
@@ -121,8 +127,7 @@ export function IndexPage() {
           <form className="flex flex-col gap-5" onSubmit={handleSubmit(onSubmit)}>
             <div className="flex flex-col gap-4">
               <FormField
-                errorMessage="Informe uma url válida."
-                hasError={!!errors.original_link}
+                error={errors.original_link?.message}
                 id="original_link"
                 label="Link original"
                 placeholder="www.exemplo.com.br"
@@ -131,9 +136,8 @@ export function IndexPage() {
               />
 
               <FormField
-                errorMessage="Informe uma url minúscula e sem espaço/caracter especial."
+                error={errors.short_link?.message}
                 fixedPlaceholder
-                hasError={!!errors.short_link}
                 id="short_link"
                 label="Link encurtado"
                 placeholder="brev.ly/"
