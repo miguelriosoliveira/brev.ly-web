@@ -1,4 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import dayjs from 'dayjs';
 import { useState } from 'react';
 import { type SubmitHandler, useForm } from 'react-hook-form';
@@ -21,15 +22,14 @@ type ShortenedLink = {
   createdAt: Date;
 };
 
+const SLUG_REGEX = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
+
 const formSchema = z.object({
   original_link: z.url('Informe uma url válida.'),
   short_link: z
     .string()
     .min(1, 'URL encurtada não pode estar vazia.')
-    .regex(
-      /^[a-z0-9]+(?:-[a-z0-9]+)*$/,
-      'Informe uma URL minúscula e sem espaço/caracter especial.',
-    ),
+    .regex(SLUG_REGEX, 'Informe uma URL minúscula e sem espaço/caracter especial.'),
 });
 
 type FormSchema = z.infer<typeof formSchema>;
@@ -42,10 +42,15 @@ export function IndexPage() {
     formState: { errors },
     reset: resetForm,
   } = useForm<FormSchema>({ resolver: zodResolver(formSchema) });
+  const mutation = useMutation({
+    mutationFn: async ({ original_link, short_link }: FormSchema) => {
+      return await api.createLink({ original_link, short_link });
+    },
+  });
 
   const onSubmit: SubmitHandler<FormSchema> = ({ original_link, short_link }) => {
     try {
-      const newLink = api.createLink({ original_link, short_link });
+      const newLink = mutation.mutate({ original_link, short_link });
       setLinks(state => [
         ...state,
         {
