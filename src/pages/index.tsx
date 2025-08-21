@@ -116,7 +116,7 @@ export function IndexPage() {
   return (
     <div className="flex flex-col items-center gap-6">
       <picture>
-        <img aria-label="Brev.ly logo" className="h-7" src={logoIconUrl} />
+        <img aria-label="Brev.ly logo" className="h-7" height={25} src={logoIconUrl} width={100} />
       </picture>
 
       <div className="flex w-full flex-col gap-3 overflow-hidden">

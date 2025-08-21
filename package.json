@@ -30,7 +30,7 @@
     "tailwind-scrollbar": "^4.0.2",
     "tailwind-variants": "^2.1.0",
     "typescript": "~5.9.2",
-    "ultracite": "5.2.4",
+    "ultracite": "^5.2.5",
     "vite": "^7.1.3"
   }
 }
