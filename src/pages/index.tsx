@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 import dayjs from 'dayjs';
 import { useState } from 'react';
 import { type SubmitHandler, useForm } from 'react-hook-form';
@@ -43,14 +43,18 @@ export function IndexPage() {
     reset: resetForm,
   } = useForm<FormSchema>({ resolver: zodResolver(formSchema) });
   const mutation = useMutation({
-    mutationFn: async ({ original_link, short_link }: FormSchema) => {
+    async mutationFn({ original_link, short_link }: FormSchema) {
       return await api.createLink({ original_link, short_link });
     },
   });
 
   const onSubmit: SubmitHandler<FormSchema> = ({ original_link, short_link }) => {
     try {
-      const newLink = mutation.mutate({ original_link, short_link });
+      mutation.mutate({ original_link, short_link });
+      if (!mutation.isSuccess) {
+        throw mutation.error;
+      }
+      const newLink = mutation.data;
       setLinks(state => [
         ...state,
         {
