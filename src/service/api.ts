@@ -1,6 +1,7 @@
 import z from 'zod';
 import { DuplicatedLinkError } from '../errors/duplicated-link-error';
 import { LinkNotFoundError } from '../errors/link-not-found-error';
+import type { ShortenedLink } from '../hooks/use-links';
 
 const linkSchema = z.object({
   id: z.uuid(),
@@ -10,9 +11,9 @@ const linkSchema = z.object({
   created_at: z.coerce.date(),
 });
 
-type ShortenedLink = z.infer<typeof linkSchema>;
+type CreateLinkResponse = z.infer<typeof linkSchema>;
 
-let links: ShortenedLink[] = [];
+let links: CreateLinkResponse[] = [];
 
 type CreateLinkRequest = {
   original_link: string;
@@ -35,7 +36,7 @@ export const api = {
       throw new DuplicatedLinkError();
     }
 
-    const newLink: ShortenedLink = {
+    const newLink: CreateLinkResponse = {
       id: crypto.randomUUID(),
       original_link,
       short_link,
@@ -44,16 +45,24 @@ export const api = {
     };
     links = [...links, newLink];
 
-    return newLink;
+    return {
+      id: newLink.id,
+      originalLink: newLink.original_link,
+      shortLink: newLink.short_link,
+      accessCount: newLink.access_count,
+      createdAt: newLink.created_at,
+    };
   },
 
   deleteLink(shortLink: string): string {
-    if (!links.some(link => link.short_link === shortLink)) {
+    const linkFound = links.find(link => link.short_link === shortLink);
+
+    if (!linkFound) {
       throw new Error('link not found!');
     }
 
     links = links.filter(link => link.short_link !== shortLink);
 
-    return shortLink;
+    return linkFound.id;
   },
 };
