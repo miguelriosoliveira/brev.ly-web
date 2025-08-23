@@ -30,8 +30,8 @@ export function LinkForm() {
     reset: resetForm,
   } = useForm<FormSchema>({ resolver: zodResolver(formSchema) });
   const mutation = useMutation({
-    async mutationFn({ original_link, short_link }: FormSchema) {
-      return await api.createLink({ original_link, short_link });
+    mutationFn({ original_link, short_link }: FormSchema) {
+      return api.createLink2({ original_link, short_link });
     },
     onSuccess(newLink) {
       addLink(newLink);

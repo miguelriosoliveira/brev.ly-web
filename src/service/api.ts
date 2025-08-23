@@ -1,4 +1,5 @@
 import z from 'zod';
+import { env } from '../env';
 import { DuplicatedLinkError } from '../errors/duplicated-link-error';
 import { LinkNotFoundError } from '../errors/link-not-found-error';
 import type { ShortenedLink } from '../hooks/use-links';
@@ -19,6 +20,15 @@ type CreateLinkRequest = {
   original_link: string;
   short_link: string;
 };
+
+function apiFetch(path: string, init?: RequestInit) {
+  const url = new URL(path, env.VITE_BACKEND_URL).toString();
+  const headers = {
+    'Content-Type': 'application/json',
+    ...init?.headers,
+  };
+  return fetch(url, { ...init, headers });
+}
 
 export const api = {
   getOriginalLink(shortLink: string): string {
@@ -44,6 +54,28 @@ export const api = {
       created_at: new Date(),
     };
     links = [...links, newLink];
+
+    return {
+      id: newLink.id,
+      originalLink: newLink.original_link,
+      shortLink: newLink.short_link,
+      accessCount: newLink.access_count,
+      createdAt: newLink.created_at,
+    };
+  },
+
+  async createLink2({ original_link, short_link }: CreateLinkRequest): Promise<ShortenedLink> {
+    const response = await apiFetch('/urls', {
+      method: 'POST',
+      body: JSON.stringify({ original_link, short_link }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to create link: ${response.status} ${response.statusText}`);
+    }
+
+    const json = await response.json();
+    const newLink = linkSchema.parse(json);
 
     return {
       id: newLink.id,
