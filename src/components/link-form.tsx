@@ -1,4 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useMutation } from '@tanstack/react-query';
 import { type SubmitHandler, useForm } from 'react-hook-form';
 import z from 'zod';
 import { DuplicatedLinkError } from '../errors/duplicated-link-error';
@@ -28,19 +29,25 @@ export function LinkForm() {
     formState: { errors },
     reset: resetForm,
   } = useForm<FormSchema>({ resolver: zodResolver(formSchema) });
-
-  const onSubmit: SubmitHandler<FormSchema> = ({ original_link, short_link }) => {
-    try {
-      const newLink = api.createLink({ original_link, short_link });
+  const mutation = useMutation({
+    async mutationFn({ original_link, short_link }: FormSchema) {
+      return await api.createLink({ original_link, short_link });
+    },
+    onSuccess(newLink) {
       addLink(newLink);
       resetForm();
-    } catch (error: unknown) {
+    },
+    onError(error) {
       if (error instanceof DuplicatedLinkError) {
         notify({ type: 'error', title: error.title, text: error.message });
       } else {
         notify({ type: 'error', title: 'Eita!', text: 'Erro ao salvar link.' });
       }
-    }
+    },
+  });
+
+  const onSubmit: SubmitHandler<FormSchema> = ({ original_link, short_link }) => {
+    mutation.mutate({ original_link, short_link });
   };
 
   return (
