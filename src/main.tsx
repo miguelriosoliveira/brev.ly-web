@@ -3,7 +3,7 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { BrowserRouter, Route, Routes } from 'react-router';
 import { ToastContainer } from 'react-toastify';
-import { IndexPage } from './pages/index';
+import { HomePage } from './pages/home';
 import { NotFoundPage } from './pages/not-found';
 import { RedirectPage } from './pages/redirect';
 import './index.css';
@@ -17,7 +17,7 @@ createRoot(document.getElementById('root')!).render(
       <BrowserRouter>
         <div className="h-dvh px-3 py-8">
           <Routes>
-            <Route element={<IndexPage />} index />
+            <Route element={<HomePage />} index />
             <Route element={<RedirectPage />} path="/:url-encurtada" />
             <Route element={<NotFoundPage />} path="/url/not-found" />
             <Route element={<NotFoundPage />} path="*" />

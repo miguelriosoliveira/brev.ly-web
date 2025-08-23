@@ -3,7 +3,7 @@ import { LinkForm } from '../components/link-form';
 import { LinksList } from '../components/links-list';
 import { LinksProvider } from '../hooks/use-links';
 
-export function IndexPage() {
+export function HomePage() {
   return (
     <div className="flex flex-col items-center gap-6">
       <picture>
