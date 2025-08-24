@@ -19,8 +19,8 @@ export function LinksList() {
       ['ID', 'Original URL', 'Short URL', 'Access Count', 'Created at'],
       ...links.map(link => [
         link.id,
-        link.originalLink,
-        link.shortLink,
+        link.originalUrl,
+        link.shortUrl,
         link.accessCount,
         dayjs(link.createdAt).format('YYYY-MM-DD HH:mm:ss.SSS'),
       ]),
@@ -40,16 +40,16 @@ export function LinksList() {
     URL.revokeObjectURL(url);
   }
 
-  function handleClipboard(shortLink: string) {
+  function handleClipboard(shortUrl: string) {
     notify({
       type: 'info',
       title: 'Link copiado com sucesso',
-      text: `O link ${shortLink} foi copiado para a área de transferência`,
+      text: `O link ${shortUrl} foi copiado para a área de transferência`,
     });
   }
 
-  function handleDeleteLink(shortLink: string) {
-    const linkId = api.deleteLink(shortLink);
+  function handleDeleteLink(shortUrl: string) {
+    const linkId = api.deleteLink(shortUrl);
     removeLink(linkId);
   }
 
@@ -69,11 +69,11 @@ export function LinksList() {
           links.map(link => (
             <LinkItem
               accessCount={link.accessCount}
-              key={link.shortLink}
+              key={link.id}
               onClipboard={handleClipboard}
               onDelete={handleDeleteLink}
-              originalLink={link.originalLink}
-              shortLink={link.shortLink}
+              originalUrl={link.originalUrl}
+              shortUrl={link.shortUrl}
             />
           ))
         ) : (

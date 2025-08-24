@@ -2,8 +2,8 @@ import { createContext, useCallback, useContext, useMemo, useState } from 'react
 
 export type ShortenedLink = {
   id: string;
-  originalLink: string;
-  shortLink: string;
+  originalUrl: string;
+  shortUrl: string;
   accessCount: number;
   createdAt: Date;
 };

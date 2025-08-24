@@ -5,43 +5,43 @@ import { Trash } from '../icons/trash';
 import { IconButton } from './icon-button';
 
 type Props = {
-  shortLink: string;
-  originalLink: string;
+  shortUrl: string;
+  originalUrl: string;
   accessCount: number;
-  onClipboard: (shortLink: string) => void;
-  onDelete: (shortLink: string) => void;
+  onClipboard: (shortUrl: string) => void;
+  onDelete: (shortUrl: string) => void;
 };
 
-export function LinkItem({ shortLink, originalLink, accessCount, onClipboard, onDelete }: Props) {
-  const fullShortLink = `${window.location.host}/${shortLink}`;
+export function LinkItem({ shortUrl, originalUrl, accessCount, onClipboard, onDelete }: Props) {
+  const fullShortUrl = `${window.location.host}/${shortUrl}`;
 
   function handleClipboard(event: MouseEvent) {
     event.preventDefault();
-    navigator.clipboard.writeText(fullShortLink);
-    onClipboard(shortLink);
+    navigator.clipboard.writeText(fullShortUrl);
+    onClipboard(shortUrl);
   }
 
   function handleDelete(event: MouseEvent) {
     event.preventDefault();
-    if (confirm(`Você realmente quer apagar o link ${shortLink}?`)) {
-      onDelete(shortLink);
+    if (confirm(`Você realmente quer apagar o link ${shortUrl}?`)) {
+      onDelete(shortUrl);
     }
   }
 
   return (
     <div
       className="flex w-full items-center justify-between gap-4 border-gray-200 border-t py-4"
-      key={shortLink}
+      key={shortUrl}
     >
       <div className="flex flex-auto flex-col overflow-auto">
         <Link
           className="truncate font-base-semibold text-blue-base"
           target="_blank"
-          to={{ pathname: shortLink }}
+          to={{ pathname: shortUrl }}
         >
-          {fullShortLink}
+          {fullShortUrl}
         </Link>
-        <span className="truncate text-sm">{originalLink}</span>
+        <span className="truncate text-sm">{originalUrl}</span>
       </div>
 
       <span className="text-nowrap text-sm">
