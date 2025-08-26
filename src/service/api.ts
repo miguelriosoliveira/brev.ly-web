@@ -1,7 +1,7 @@
 import axios, { type AxiosError } from 'axios';
 import z from 'zod';
 import { env } from '../env';
-import { ErrorCodes } from '../errors/error-codes';
+import { ERROR_CODES, ErrorCodes } from '../errors/error-codes';
 import { LinkNotFoundError } from '../errors/link-not-found-error';
 import type { ShortenedLink } from '../hooks/use-links';
 
@@ -13,7 +13,7 @@ const linkSchema = z.object({
   created_at: z.coerce.date(),
 });
 
-const errorSchema = z.object({ error_code: z.string() });
+const errorSchema = z.object({ error_code: z.enum(ERROR_CODES) });
 
 type CreateLinkResponse = z.infer<typeof linkSchema>;
 type ErrorResponse = z.infer<typeof errorSchema>;
@@ -69,12 +69,13 @@ export const api = {
       if (axiosErr.response?.data) {
         const parsed = errorSchema.safeParse(axiosErr.response.data);
         if (!parsed.success) {
-          throw new Error('Unknown error');
+          throw ErrorCodes.UNKNOWN_ERROR;
         }
         const err = ErrorCodes[parsed.data.error_code];
         if (!err) {
-          throw new Error(parsed.data.error_code);
+          throw ErrorCodes.UNKNOWN_ERROR;
         }
+        throw err;
       }
       throw error;
     }
