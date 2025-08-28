@@ -1,9 +1,9 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { type SubmitHandler, useForm } from 'react-hook-form';
 import z from 'zod';
 import { DuplicateUrlError } from '../errors/duplicated-link-error';
-import { useLinks } from '../hooks/use-links';
+import { type ShortenedLink, useLinks } from '../hooks/use-links';
 import { api } from '../service/api';
 import { notify } from '../service/toast';
 import { Button } from './button';
@@ -29,6 +29,7 @@ export function LinkForm() {
     formState: { errors },
     reset: resetForm,
   } = useForm<FormSchema>({ resolver: zodResolver(formSchema) });
+  const queryClient = useQueryClient();
   const mutation = useMutation({
     mutationFn({ original_url, short_url }: FormSchema) {
       return api.createLink({ original_url, short_url });
@@ -36,6 +37,7 @@ export function LinkForm() {
     onSuccess(newLink) {
       addLink(newLink);
       resetForm();
+      queryClient.setQueryData<ShortenedLink[]>(['links'], state => [...(state || []), newLink]);
     },
     onError(error) {
       if (error instanceof DuplicateUrlError) {

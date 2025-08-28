@@ -13,26 +13,20 @@ const linkSchema = z.object({
   created_at: z.coerce.date(),
 });
 
+const linksSchema = z.array(linkSchema);
+
 const errorSchema = z.object({ error_code: z.enum(ERROR_CODES) });
 
-type CreateLinkResponse = z.infer<typeof linkSchema>;
-type ErrorResponse = z.infer<typeof errorSchema>;
-
-let links: CreateLinkResponse[] = [];
+type LinkSchema = z.infer<typeof linkSchema>;
 
 type CreateLinkRequest = {
   original_url: string;
   short_url: string;
 };
 
-// function apiFetch(path: string, init?: RequestInit) {
-//   const url = new URL(path, env.VITE_BACKEND_URL).toString();
-//   const headers = {
-//     'Content-Type': 'application/json',
-//     ...init?.headers,
-//   };
-//   return fetch(url, { ...init, headers });
-// }
+type ErrorResponse = z.infer<typeof errorSchema>;
+
+let links: LinkSchema[] = [];
 
 const apiFetch = axios.create({
   baseURL: env.VITE_BACKEND_URL,
@@ -40,6 +34,17 @@ const apiFetch = axios.create({
 });
 
 export const api = {
+  async getLinks(): Promise<ShortenedLink[]> {
+    const response = await apiFetch.get<LinkSchema[]>('/urls');
+    return linksSchema.parse(response.data).map(link => ({
+      id: link.id,
+      originalUrl: link.original_url,
+      shortUrl: link.short_url,
+      accessCount: link.access_count,
+      createdAt: link.created_at,
+    }));
+  },
+
   getOriginalUrl(shortUrl: string): string {
     const linkFound = links.find(link => link.short_url === shortUrl);
 
@@ -52,7 +57,7 @@ export const api = {
 
   async createLink({ original_url, short_url }: CreateLinkRequest): Promise<ShortenedLink> {
     try {
-      const response = await apiFetch.post<CreateLinkResponse>('/urls', {
+      const response = await apiFetch.post<LinkSchema[]>('/urls', {
         original_url,
         short_url,
       });

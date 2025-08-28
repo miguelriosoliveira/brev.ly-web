@@ -1,3 +1,4 @@
+import { useQuery } from '@tanstack/react-query';
 import dayjs from 'dayjs';
 import { useLinks } from '../hooks/use-links';
 import { Download } from '../icons/download';
@@ -8,7 +9,11 @@ import { Button } from './button';
 import { LinkItem } from './link-item';
 
 export function LinksList() {
-  const { links, removeLink } = useLinks();
+  const { removeLink } = useLinks();
+  const { data: links = [] } = useQuery({
+    queryKey: ['links'],
+    queryFn: api.getLinks,
+  });
 
   function handleDownloadCsv() {
     if (links.length === 0) {
