@@ -10,19 +10,19 @@ import { LinkItem } from './link-item';
 
 export function LinksList() {
   const { removeLink } = useLinks();
-  const { data: links = [] } = useQuery({
+  const { data: linksPage = { items: [], nextCursor: null, total: 0 } } = useQuery({
     queryKey: ['links'],
     queryFn: api.getLinks,
   });
 
   function handleDownloadCsv() {
-    if (links.length === 0) {
+    if (linksPage.length === 0) {
       return;
     }
 
     const csvRows = [
       ['ID', 'Original URL', 'Short URL', 'Access Count', 'Created at'],
-      ...links.map(link => [
+      ...linksPage.map(link => [
         link.id,
         link.originalUrl,
         link.shortUrl,
@@ -63,15 +63,19 @@ export function LinksList() {
       <header className="flex justify-between">
         <h2 className="font-lg-bold">Meus links</h2>
 
-        <Button disabled={links.length === 0} onClick={handleDownloadCsv} variant="secondary">
+        <Button
+          disabled={linksPage.items.length === 0}
+          onClick={handleDownloadCsv}
+          variant="secondary"
+        >
           <Download className="text-gray-600" size={16} />
           Baixar CSV
         </Button>
       </header>
 
       <main className="scrollbar scrollbar-thumb-blue-base flex flex-col items-center justify-center overflow-auto text-gray-500">
-        {links.length > 0 ? (
-          links.map(link => (
+        {linksPage.items.length > 0 ? (
+          linksPage.items.map(link => (
             <LinkItem
               accessCount={link.accessCount}
               key={link.id}
