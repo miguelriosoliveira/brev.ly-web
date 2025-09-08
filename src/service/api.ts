@@ -40,8 +40,8 @@ const apiFetch = axios.create({
 });
 
 export const api = {
-  async getLinks(): Promise<LinksPage> {
-    const { data } = await apiFetch.get('/urls');
+  async getLinks(cursor?: string): Promise<LinksPage> {
+    const { data } = await apiFetch.get('/urls', { params: { cursor: cursor || undefined } });
     const response = LINKS_PAGE_SCHEMA.parse(data);
     return {
       items: response.items.map(link => ({

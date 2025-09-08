@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { useInfiniteQuery } from '@tanstack/react-query';
 import dayjs from 'dayjs';
 import { useLinks } from '../hooks/use-links';
 import { Download } from '../icons/download';
@@ -10,19 +10,21 @@ import { LinkItem } from './link-item';
 
 export function LinksList() {
   const { removeLink } = useLinks();
-  const { data: linksPage = { items: [], nextCursor: null, total: 0 } } = useQuery({
+  const { data, fetchNextPage, hasNextPage, isFetching, isFetchingNextPage } = useInfiniteQuery({
     queryKey: ['links'],
-    queryFn: api.getLinks,
+    queryFn: ({ pageParam }) => api.getLinks(pageParam),
+    initialPageParam: '',
+    getNextPageParam: lastPage => lastPage.nextCursor,
   });
 
   function handleDownloadCsv() {
-    if (linksPage.length === 0) {
+    if (linksPage.items.length === 0) {
       return;
     }
 
     const csvRows = [
       ['ID', 'Original URL', 'Short URL', 'Access Count', 'Created at'],
-      ...linksPage.map(link => [
+      ...linksPage.items.map(link => [
         link.id,
         link.originalUrl,
         link.shortUrl,
@@ -63,28 +65,26 @@ export function LinksList() {
       <header className="flex justify-between">
         <h2 className="font-lg-bold">Meus links</h2>
 
-        <Button
-          disabled={linksPage.items.length === 0}
-          onClick={handleDownloadCsv}
-          variant="secondary"
-        >
+        <Button disabled={data?.pages.length === 0} onClick={handleDownloadCsv} variant="secondary">
           <Download className="text-gray-600" size={16} />
           Baixar CSV
         </Button>
       </header>
 
       <main className="scrollbar scrollbar-thumb-blue-base flex flex-col items-center justify-center overflow-auto text-gray-500">
-        {linksPage.items.length > 0 ? (
-          linksPage.items.map(link => (
-            <LinkItem
-              accessCount={link.accessCount}
-              key={link.id}
-              onClipboard={handleClipboard}
-              onDelete={handleDeleteLink}
-              originalUrl={link.originalUrl}
-              shortUrl={link.shortUrl}
-            />
-          ))
+        {data && data.pages.length > 0 ? (
+          data.pages.map(linksPage =>
+            linksPage.items.map(link => (
+              <LinkItem
+                accessCount={link.accessCount}
+                key={link.id}
+                onClipboard={handleClipboard}
+                onDelete={handleDeleteLink}
+                originalUrl={link.originalUrl}
+                shortUrl={link.shortUrl}
+              />
+            )),
+          )
         ) : (
           <div className="w-full place-items-center border-gray-200 border-t pt-5 text-center">
             <LinkIcon className="text-gray-400" />
@@ -92,6 +92,14 @@ export function LinksList() {
           </div>
         )}
       </main>
+
+      <button onClick={() => fetchNextPage()} disabled={isFetching || !hasNextPage}>
+        {isFetchingNextPage
+          ? 'Loading more...'
+          : hasNextPage
+          ? 'Load More'
+          : 'Nothing more to load'}
+      </button>
     </div>
   );
 }
