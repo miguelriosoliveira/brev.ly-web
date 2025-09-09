@@ -7,6 +7,7 @@ import { api } from '../service/api';
 import { notify } from '../service/toast';
 import { Button } from './button';
 import { LinkItem } from './link-item';
+import { useEffect, useRef } from 'react';
 
 export function LinksList() {
   const { removeLink } = useLinks();
@@ -16,6 +17,31 @@ export function LinksList() {
     initialPageParam: '',
     getNextPageParam: lastPage => lastPage.nextCursor,
   });
+
+  // Sentinel and scroll-root refs
+  const scrollRootRef = useRef<HTMLDivElement | null>(null);
+  const sentinelRef = useRef<HTMLButtonElement | null>(null);
+
+  useEffect(() => {
+    const root = scrollRootRef.current;
+    const target = sentinelRef.current;
+    if (!root || !target) return;
+
+    const observer = new IntersectionObserver(
+      entries => {
+        const [entry] = entries;
+        if (entry.isIntersecting && hasNextPage && !isFetching && !isFetchingNextPage) {
+          fetchNextPage();
+        }
+      },
+      {
+        root, // observe visibility within the scrollable container
+        threshold: 0,
+      },
+    );
+    observer.observe(target);
+    return () => observer.disconnect();
+  }, [fetchNextPage, hasNextPage, isFetching, isFetchingNextPage]);
 
   function handleDownloadCsv() {
     if (linksPage.items.length === 0) {
@@ -71,7 +97,10 @@ export function LinksList() {
         </Button>
       </header>
 
-      <main className="scrollbar scrollbar-thumb-blue-base flex flex-col items-center justify-center overflow-auto text-gray-500">
+      <main
+        ref={scrollRootRef}
+        className="scrollbar scrollbar-thumb-blue-base flex flex-col items-center overflow-auto text-gray-500"
+      >
         {data && data.pages.length > 0 ? (
           data.pages.map(linksPage =>
             linksPage.items.map(link => (
@@ -91,15 +120,19 @@ export function LinksList() {
             <span className="font-xs-uppercase">Ainda não existem links cadastrados</span>
           </div>
         )}
-      </main>
 
-      <button onClick={() => fetchNextPage()} disabled={isFetching || !hasNextPage}>
-        {isFetchingNextPage
-          ? 'Loading more...'
-          : hasNextPage
-          ? 'Load More'
-          : 'Nothing more to load'}
-      </button>
+        <button
+          ref={sentinelRef}
+          onClick={() => fetchNextPage()}
+          disabled={isFetching || !hasNextPage}
+        >
+          {isFetchingNextPage
+            ? 'Loading more...'
+            : hasNextPage
+            ? 'Load More'
+            : 'Nothing more to load'}
+        </button>
+      </main>
     </div>
   );
 }
