@@ -1,10 +1,5 @@
-import { CopyIcon } from '@phosphor-icons/react';
-import type { ComponentProps } from 'react';
+import { CopyIcon, type IconProps } from '@phosphor-icons/react';
 
-interface Props extends ComponentProps<typeof CopyIcon> {
-  size?: number;
-}
-
-export function Copy({ size = 32, ...props }: Props) {
+export function Copy({ size = 32, ...props }: IconProps) {
   return <CopyIcon size={size} {...props} />;
 }

@@ -38,6 +38,9 @@ importers:
       react-toastify:
         specifier: ^11.0.5
         version: 11.0.5(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
+      tailwind-merge:
+        specifier: ^3.3.1
+        version: 3.3.1
       tailwindcss:
         specifier: ^4.1.13
         version: 4.1.13
@@ -65,7 +68,7 @@ importers:
         version: 4.0.2(react@19.1.1)(tailwindcss@4.1.13)
       tailwind-variants:
         specifier: ^3.1.0
-        version: 3.1.0(tailwind-merge@3.0.2)(tailwindcss@4.1.13)
+        version: 3.1.0(tailwind-merge@3.3.1)(tailwindcss@4.1.13)
       typescript:
         specifier: ~5.9.2
         version: 5.9.2
@@ -1140,8 +1143,8 @@ packages:
   strip-literal@3.0.0:
     resolution: {integrity: sha512-TcccoMhJOM3OebGhSBEmp3UZ2SfDMZUEBdRA/9ynfLi8yYajyWX3JiXArcJt4Umh4vISpspkQIY8ZZoCqjbviA==}
 
-  tailwind-merge@3.0.2:
-    resolution: {integrity: sha512-l7z+OYZ7mu3DTqrL88RiKrKIqO3NcpEO8V/Od04bNpvk0kiIFndGEoqfuzvj4yuhRkHKjRkII2z+KS2HfPcSxw==}
+  tailwind-merge@3.3.1:
+    resolution: {integrity: sha512-gBXpgUm/3rp1lMZZrM/w7D8GKqshif0zAymAhbCyIt8KMe+0v9DQ7cdYLR4FHH/cKpdTXb+A/tKKU3eolfsI+g==}
 
   tailwind-scrollbar@4.0.2:
     resolution: {integrity: sha512-wAQiIxAPqk0MNTPptVe/xoyWi27y+NRGnTwvn4PQnbvB9kp8QUBiGl/wsfoVBHnQxTmhXJSNt9NHTmcz9EivFA==}
@@ -2242,8 +2245,7 @@ snapshots:
     dependencies:
       js-tokens: 9.0.1
 
-  tailwind-merge@3.0.2:
-    optional: true
+  tailwind-merge@3.3.1: {}
 
   tailwind-scrollbar@4.0.2(react@19.1.1)(tailwindcss@4.1.13):
     dependencies:
@@ -2252,11 +2254,11 @@ snapshots:
     transitivePeerDependencies:
       - react
 
-  tailwind-variants@3.1.0(tailwind-merge@3.0.2)(tailwindcss@4.1.13):
+  tailwind-variants@3.1.0(tailwind-merge@3.3.1)(tailwindcss@4.1.13):
     dependencies:
       tailwindcss: 4.1.13
     optionalDependencies:
-      tailwind-merge: 3.0.2
+      tailwind-merge: 3.3.1
 
   tailwindcss@4.1.13: {}
 

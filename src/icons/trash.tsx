@@ -1,10 +1,5 @@
-import { TrashIcon } from '@phosphor-icons/react';
-import type { ComponentProps } from 'react';
+import { type IconProps, TrashIcon } from '@phosphor-icons/react';
 
-interface Props extends ComponentProps<typeof TrashIcon> {
-  size?: number;
-}
-
-export function Trash({ size = 32, ...props }: Props) {
+export function Trash({ size = 32, ...props }: IconProps) {
   return <TrashIcon size={size} {...props} />;
 }

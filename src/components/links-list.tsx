@@ -1,31 +1,36 @@
 import { useInfiniteQuery } from '@tanstack/react-query';
 import dayjs from 'dayjs';
+import { useEffect, useRef } from 'react';
 import { useLinks } from '../hooks/use-links';
 import { Download } from '../icons/download';
 import { Link as LinkIcon } from '../icons/link';
+import { Spinner } from '../icons/spinner';
 import { api } from '../service/api';
 import { notify } from '../service/toast';
 import { Button } from './button';
 import { LinkItem } from './link-item';
-import { useEffect, useRef } from 'react';
+import { IconMessage } from './icon-message';
 
 export function LinksList() {
   const { removeLink } = useLinks();
-  const { data, fetchNextPage, hasNextPage, isFetching, isFetchingNextPage } = useInfiniteQuery({
-    queryKey: ['links'],
-    queryFn: ({ pageParam }) => api.getLinks(pageParam),
-    initialPageParam: '',
-    getNextPageParam: lastPage => lastPage.nextCursor,
-  });
+  const { data, fetchNextPage, hasNextPage, isFetching, isFetchingNextPage, isFetched } =
+    useInfiniteQuery({
+      queryKey: ['links'],
+      queryFn: ({ pageParam }) => api.getLinks(pageParam),
+      initialPageParam: '',
+      getNextPageParam: lastPage => lastPage.nextCursor,
+    });
 
   // Sentinel and scroll-root refs
   const scrollRootRef = useRef<HTMLDivElement | null>(null);
-  const sentinelRef = useRef<HTMLButtonElement | null>(null);
+  const sentinelRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     const root = scrollRootRef.current;
     const target = sentinelRef.current;
-    if (!root || !target) return;
+    if (!(root && target)) {
+      return;
+    }
 
     const observer = new IntersectionObserver(
       entries => {
@@ -98,40 +103,33 @@ export function LinksList() {
       </header>
 
       <main
-        ref={scrollRootRef}
         className="scrollbar scrollbar-thumb-blue-base flex flex-col items-center overflow-auto text-gray-500"
+        ref={scrollRootRef}
       >
-        {data && data.pages.length > 0 ? (
-          data.pages.map(linksPage =>
-            linksPage.items.map(link => (
-              <LinkItem
-                accessCount={link.accessCount}
-                key={link.id}
-                onClipboard={handleClipboard}
-                onDelete={handleDeleteLink}
-                originalUrl={link.originalUrl}
-                shortUrl={link.shortUrl}
-              />
-            )),
+        {isFetched ? (
+          data?.pages.flatMap(linksPage => linksPage.items).length ? (
+            data?.pages.map(linksPage =>
+              linksPage.items.map(link => (
+                <LinkItem
+                  accessCount={link.accessCount}
+                  key={link.id}
+                  onClipboard={handleClipboard}
+                  onDelete={handleDeleteLink}
+                  originalUrl={link.originalUrl}
+                  shortUrl={link.shortUrl}
+                />
+              )),
+            )
+          ) : (
+            <IconMessage Icon={LinkIcon} message="Ainda não existem links cadastrados" />
           )
         ) : (
-          <div className="w-full place-items-center border-gray-200 border-t pt-5 text-center">
-            <LinkIcon className="text-gray-400" />
-            <span className="font-xs-uppercase">Ainda não existem links cadastrados</span>
-          </div>
+          <IconMessage Icon={Spinner} message="Carregando links..." />
         )}
 
-        <button
-          ref={sentinelRef}
-          onClick={() => fetchNextPage()}
-          disabled={isFetching || !hasNextPage}
-        >
-          {isFetchingNextPage
-            ? 'Loading more...'
-            : hasNextPage
-            ? 'Load More'
-            : 'Nothing more to load'}
-        </button>
+        {hasNextPage && (
+          <IconMessage ref={sentinelRef} Icon={Spinner} message="Carregando links..." />
+        )}
       </main>
     </div>
   );

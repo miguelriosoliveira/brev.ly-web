@@ -1,10 +1,5 @@
-import { DownloadSimpleIcon } from '@phosphor-icons/react';
-import type { ComponentProps } from 'react';
+import { DownloadSimpleIcon, type IconProps } from '@phosphor-icons/react';
 
-interface Props extends ComponentProps<typeof DownloadSimpleIcon> {
-  size?: number;
-}
-
-export function Download({ size = 32, ...props }: Props) {
+export function Download({ size = 32, ...props }: IconProps) {
   return <DownloadSimpleIcon size={size} {...props} />;
 }

@@ -1,10 +1,5 @@
-import { LinkIcon } from '@phosphor-icons/react';
-import type { ComponentProps } from 'react';
+import { type IconProps, LinkIcon } from '@phosphor-icons/react';
 
-interface Props extends ComponentProps<typeof LinkIcon> {
-  size?: number;
-}
-
-export function Link({ size = 32, ...props }: Props) {
+export function Link({ size = 32, ...props }: IconProps) {
   return <LinkIcon size={size} {...props} />;
 }
