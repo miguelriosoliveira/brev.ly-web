@@ -8,8 +8,8 @@ import { Spinner } from '../icons/spinner';
 import { api } from '../service/api';
 import { notify } from '../service/toast';
 import { Button } from './button';
-import { LinkItem } from './link-item';
 import { IconMessage } from './icon-message';
+import { LinkItem } from './link-item';
 
 export function LinksList() {
   const { removeLink } = useLinks();
@@ -128,7 +128,7 @@ export function LinksList() {
         )}
 
         {hasNextPage && (
-          <IconMessage ref={sentinelRef} Icon={Spinner} message="Carregando links..." />
+          <IconMessage Icon={Spinner} message="Carregando links..." ref={sentinelRef} />
         )}
       </main>
     </div>

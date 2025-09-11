@@ -3,7 +3,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { type SubmitHandler, useForm } from 'react-hook-form';
 import z from 'zod';
 import { DuplicateUrlError } from '../errors/duplicated-link-error';
-import { type ShortenedLink, useLinks } from '../hooks/use-links';
+import { useLinks } from '../hooks/use-links';
 import { api } from '../service/api';
 import { notify } from '../service/toast';
 import { Button } from './button';
@@ -37,7 +37,7 @@ export function LinkForm() {
     onSuccess(newLink) {
       addLink(newLink);
       resetForm();
-      queryClient.setQueryData<ShortenedLink[]>(['links'], state => [...(state || []), newLink]);
+      queryClient.invalidateQueries({ queryKey: ['links'] });
     },
     onError(error) {
       if (error instanceof DuplicateUrlError) {

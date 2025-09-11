@@ -77,11 +77,7 @@ export const api = {
         if (!parsed.success) {
           throw ErrorCodes.UNKNOWN_ERROR;
         }
-        const err = ErrorCodes[parsed.data.error_code];
-        if (!err) {
-          throw ErrorCodes.UNKNOWN_ERROR;
-        }
-        throw err;
+        throw ErrorCodes[parsed.data.error_code] || ErrorCodes.UNKNOWN_ERROR;
       }
       throw error;
     }
