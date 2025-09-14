@@ -1,4 +1,4 @@
-import { useInfiniteQuery } from '@tanstack/react-query';
+import { useInfiniteQuery, useIsMutating } from '@tanstack/react-query';
 import dayjs from 'dayjs';
 import { useEffect, useRef } from 'react';
 import { useLinks } from '../hooks/use-links';
@@ -9,10 +9,12 @@ import { api } from '../service/api';
 import { notify } from '../service/toast';
 import { Button } from './button';
 import { IconMessage } from './icon-message';
+import { LinearLoader } from './linear-loader/linear-loader';
 import { LinkItem } from './link-item';
 
 export function LinksList() {
   const { removeLink } = useLinks();
+  const mutationCount = useIsMutating();
   const { data, fetchNextPage, hasNextPage, isFetching, isFetchingNextPage, isFetched } =
     useInfiniteQuery({
       queryKey: ['links'],
@@ -21,7 +23,8 @@ export function LinksList() {
       getNextPageParam: lastPage => lastPage.nextCursor,
     });
 
-  // Sentinel and scroll-root refs
+  const isSavingUrl = mutationCount > 0;
+  const items = data?.pages.flatMap(linksPage => linksPage.items) || [];
   const scrollRootRef = useRef<HTMLDivElement | null>(null);
   const sentinelRef = useRef<HTMLDivElement | null>(null);
 
@@ -39,15 +42,13 @@ export function LinksList() {
           fetchNextPage();
         }
       },
-      {
-        root, // observe visibility within the scrollable container
-        threshold: 0,
-      },
+      { root, threshold: 0 },
     );
     observer.observe(target);
     return () => observer.disconnect();
   }, [fetchNextPage, hasNextPage, isFetching, isFetchingNextPage]);
 
+  // FIXME
   function handleDownloadCsv() {
     if (linksPage.items.length === 0) {
       return;
@@ -86,30 +87,33 @@ export function LinksList() {
     });
   }
 
+  // FIXME
   function handleDeleteLink(shortUrl: string) {
     const linkId = api.deleteLink(shortUrl);
     removeLink(linkId);
   }
 
   return (
-    <div className="flex flex-col gap-4 overflow-hidden rounded-lg bg-gray-100 p-6">
-      <header className="flex justify-between">
-        <h2 className="font-lg-bold">Meus links</h2>
+    <div className="flex flex-col overflow-hidden rounded-lg">
+      {(isFetching || isSavingUrl) && <LinearLoader />}
 
-        <Button disabled={data?.pages.length === 0} onClick={handleDownloadCsv} variant="secondary">
-          <Download className="text-gray-600" size={16} />
-          Baixar CSV
-        </Button>
-      </header>
+      <div className="flex flex-col gap-4 overflow-hidden bg-gray-100 p-6">
+        <header className="flex justify-between">
+          <h2 className="font-lg-bold">Meus links</h2>
 
-      <main
-        className="scrollbar scrollbar-thumb-blue-base flex flex-col items-center overflow-auto text-gray-500"
-        ref={scrollRootRef}
-      >
-        {isFetched ? (
-          data?.pages.flatMap(linksPage => linksPage.items).length ? (
-            data?.pages.map(linksPage =>
-              linksPage.items.map(link => (
+          <Button disabled={items.length === 0} onClick={handleDownloadCsv} variant="secondary">
+            <Download className="text-gray-600" size={16} />
+            Baixar CSV
+          </Button>
+        </header>
+
+        <main
+          className="scrollbar scrollbar-thumb-blue-base flex flex-col items-center overflow-auto text-gray-500"
+          ref={scrollRootRef}
+        >
+          {isFetched ? (
+            items.length ? (
+              items.map(link => (
                 <LinkItem
                   accessCount={link.accessCount}
                   key={link.id}
@@ -118,19 +122,19 @@ export function LinksList() {
                   originalUrl={link.originalUrl}
                   shortUrl={link.shortUrl}
                 />
-              )),
+              ))
+            ) : (
+              <IconMessage Icon={LinkIcon} message="Ainda não existem links cadastrados" />
             )
           ) : (
-            <IconMessage Icon={LinkIcon} message="Ainda não existem links cadastrados" />
-          )
-        ) : (
-          <IconMessage Icon={Spinner} message="Carregando links..." />
-        )}
+            <IconMessage Icon={Spinner} message="Carregando links..." />
+          )}
 
-        {hasNextPage && (
-          <IconMessage Icon={Spinner} message="Carregando links..." ref={sentinelRef} />
-        )}
-      </main>
+          {hasNextPage && (
+            <IconMessage Icon={Spinner} message="Carregando links..." ref={sentinelRef} />
+          )}
+        </main>
+      </div>
     </div>
   );
 }

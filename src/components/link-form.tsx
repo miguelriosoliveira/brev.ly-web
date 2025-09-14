@@ -59,26 +59,30 @@ export function LinkForm() {
       <form className="flex flex-col gap-5" onSubmit={handleSubmit(onSubmit)}>
         <div className="flex flex-col gap-4">
           <FormField
-            error={errors.original_url?.message}
+            type="url"
             id="original_url"
             label="Link original"
             placeholder="www.exemplo.com.br"
-            type="url"
+            error={errors.original_url?.message}
+            disabled={mutation.isPending}
             {...register('original_url', { required: true })}
           />
 
           <FormField
-            error={errors.short_url?.message}
+            type="text"
             fixedPlaceholder
             id="short_url"
             label="Link encurtado"
             placeholder="brev.ly/"
-            type="text"
+            error={errors.short_url?.message}
+            disabled={mutation.isPending}
             {...register('short_url', { required: true })}
           />
         </div>
 
-        <Button type="submit">Salvar link</Button>
+        <Button type="submit" disabled={mutation.isPending}>
+          Salvar link
+        </Button>
       </form>
     </div>
   );
