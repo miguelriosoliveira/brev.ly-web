@@ -10,8 +10,7 @@ export function RedirectPage() {
     if (!shortUrl) {
       return;
     }
-    const originalUrl = api.getOriginalUrl(shortUrl);
-    setOriginalUrl(originalUrl);
+    setOriginalUrl(api.getOriginalUrl(shortUrl));
   }, [shortUrl]);
 
   return (

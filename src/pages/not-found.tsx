@@ -9,7 +9,9 @@ export function NotFoundPage() {
           <img
             aria-label="image containing the number 404"
             className="h-20"
+            height={80}
             src={notFoundStatusUrl}
+            width={180}
           />
         </picture>
 

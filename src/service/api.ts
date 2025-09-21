@@ -34,6 +34,8 @@ type CreateLinkRequest = {
   short_url: string;
 };
 
+const FILENAME_REGEX = /filename="?([^"]+)"?/;
+
 const apiFetch = axios.create({
   baseURL: env.VITE_BACKEND_URL,
   headers: { 'Content-Type': 'application/json' },
@@ -70,6 +72,28 @@ export const api = {
         accessCount: newLink.access_count,
         createdAt: newLink.created_at,
       };
+    } catch (error) {
+      const axiosErr = error as AxiosError<ApiError>;
+      if (axiosErr.response?.data) {
+        const parsed = ERROR_SCHEMA.safeParse(axiosErr.response.data);
+        if (!parsed.success) {
+          throw ErrorCodes.UNKNOWN_ERROR;
+        }
+        throw ErrorCodes[parsed.data.error_code] || ErrorCodes.UNKNOWN_ERROR;
+      }
+      throw error;
+    }
+  },
+
+  async downloadCsv() {
+    try {
+      const { headers, data: body } = await apiFetch.get('/downloads', { responseType: 'text' });
+
+      const contentDisposition = headers['content-disposition'];
+      const filename =
+        FILENAME_REGEX.exec(contentDisposition)?.at(1) || `${crypto.randomUUID()}_links.csv`;
+
+      return { body, filename };
     } catch (error) {
       const axiosErr = error as AxiosError<ApiError>;
       if (axiosErr.response?.data) {

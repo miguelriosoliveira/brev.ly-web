@@ -1,5 +1,4 @@
-import { useInfiniteQuery, useIsMutating } from '@tanstack/react-query';
-import dayjs from 'dayjs';
+import { useInfiniteQuery, useIsMutating, useQuery } from '@tanstack/react-query';
 import { useEffect, useRef } from 'react';
 import { useLinks } from '../hooks/use-links';
 import { Download } from '../icons/download';
@@ -22,9 +21,14 @@ export function LinksList() {
       initialPageParam: '',
       getNextPageParam: lastPage => lastPage.nextCursor,
     });
+  const { refetch: fetchCsv, isFetching: isFetchingCsv } = useQuery({
+    enabled: false,
+    queryKey: ['download'],
+    queryFn: api.downloadCsv,
+  });
 
   const isSavingUrl = mutationCount > 0;
-  const items = data?.pages.flatMap(linksPage => linksPage.items) || [];
+  const links = data?.pages.flatMap(linksPage => linksPage.items) || [];
   const scrollRootRef = useRef<HTMLDivElement | null>(null);
   const sentinelRef = useRef<HTMLDivElement | null>(null);
 
@@ -48,35 +52,25 @@ export function LinksList() {
     return () => observer.disconnect();
   }, [fetchNextPage, hasNextPage, isFetching, isFetchingNextPage]);
 
-  // FIXME
   function handleDownloadCsv() {
-    if (linksPage.items.length === 0) {
-      return;
-    }
+    fetchCsv().then(result => {
+      if (!result.data) {
+        notify({ type: 'error', title: 'Erro', text: 'Falha ao baixar CSV.' });
+        return;
+      }
 
-    const csvRows = [
-      ['ID', 'Original URL', 'Short URL', 'Access Count', 'Created at'],
-      ...linksPage.items.map(link => [
-        link.id,
-        link.originalUrl,
-        link.shortUrl,
-        link.accessCount,
-        dayjs(link.createdAt).format('YYYY-MM-DD HH:mm:ss.SSS'),
-      ]),
-    ]
-      .map(row => row.join(','))
-      .join('\n');
+      const { body: csvContent, filename } = result.data;
+      const blob = new Blob([csvContent], { type: 'text/csv' });
+      const url = URL.createObjectURL(blob);
 
-    const blob = new Blob([csvRows], { type: 'text/csv' });
-    const url = URL.createObjectURL(blob);
-
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'links.csv';
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    });
   }
 
   function handleClipboard(shortUrl: string) {
@@ -101,8 +95,12 @@ export function LinksList() {
         <header className="flex justify-between">
           <h2 className="font-lg-bold">Meus links</h2>
 
-          <Button disabled={items.length === 0} onClick={handleDownloadCsv} variant="secondary">
-            <Download className="text-gray-600" size={16} />
+          <Button
+            disabled={links.length === 0 || isFetchingCsv}
+            onClick={handleDownloadCsv}
+            variant="secondary"
+          >
+            {isFetchingCsv ? <Spinner size={16} /> : <Download size={16} />}
             Baixar CSV
           </Button>
         </header>
@@ -112,8 +110,8 @@ export function LinksList() {
           ref={scrollRootRef}
         >
           {isFetched ? (
-            items.length ? (
-              items.map(link => (
+            links.length ? (
+              links.map(link => (
                 <LinkItem
                   accessCount={link.accessCount}
                   key={link.id}
