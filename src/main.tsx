@@ -19,7 +19,7 @@ createRoot(document.getElementById('root')!).render(
           <Routes>
             <Route element={<HomePage />} index />
             <Route element={<RedirectPage />} path="/:url-encurtada" />
-            <Route element={<NotFoundPage />} path="/url/not-found" />
+            {/* <Route element={<NotFoundPage />} path="/url/not-found" /> */}
             <Route element={<NotFoundPage />} path="*" />
           </Routes>
           <ToastContainer />

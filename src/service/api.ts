@@ -106,4 +106,8 @@ export const api = {
       throw error;
     }
   },
+
+	async getOriginalUrl(shortUrl: string) {
+
+	}
 };
