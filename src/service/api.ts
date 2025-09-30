@@ -36,6 +36,11 @@ type CreateLinkRequest = {
 
 const FILENAME_REGEX = /filename="?([^"]+)"?/;
 
+const ORIGINAL_URL_SCHEMA = z.object({
+  original_url: LINK_SCHEMA.shape.original_url,
+});
+type ApiOriginalUrlResponse = z.infer<typeof ORIGINAL_URL_SCHEMA>;
+
 const apiFetch = axios.create({
   baseURL: env.VITE_BACKEND_URL,
   headers: { 'Content-Type': 'application/json' },
@@ -107,7 +112,21 @@ export const api = {
     }
   },
 
-	async getOriginalUrl(shortUrl: string) {
-
-	}
+  async getOriginalUrl(shortUrl: string): Promise<string> {
+    try {
+      const { data } = await apiFetch.get<ApiOriginalUrlResponse>(`/urls/${shortUrl}`);
+      const { original_url } = ORIGINAL_URL_SCHEMA.parse(data);
+      return original_url;
+    } catch (error) {
+      const axiosErr = error as AxiosError<ApiError>;
+      if (axiosErr.response?.data) {
+        const parsed = ERROR_SCHEMA.safeParse(axiosErr.response.data);
+        if (!parsed.success) {
+          throw ErrorCodes.UNKNOWN_ERROR;
+        }
+        throw ErrorCodes[parsed.data.error_code] || ErrorCodes.UNKNOWN_ERROR;
+      }
+      throw error;
+    }
+  },
 };
