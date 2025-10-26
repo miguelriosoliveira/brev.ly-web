@@ -1,27 +1,55 @@
 import { useQuery } from '@tanstack/react-query';
-import { Navigate, useParams } from 'react-router';
-import { Spinner } from '../icons/spinner';
+import { useEffect } from 'react';
+import { Link, Navigate, useParams } from 'react-router';
+import logoIconUrl from '../assets/logo-icon.svg';
 import { api } from '../service/api';
 
 export function RedirectPage() {
   const { 'url-encurtada': shortUrl } = useParams() as { 'url-encurtada': string };
-  const { data: originalUrl, isFetching } = useQuery({
+  const { data: originalUrl, isFetched } = useQuery({
     queryKey: ['redirect'],
     queryFn: () => api.getOriginalUrl(shortUrl),
     retry: 1,
   });
 
-  if (isFetching) {
-    return <Spinner />;
-  }
+  useEffect(() => {
+    if (originalUrl) {
+      window.location.replace(originalUrl);
+    }
+  }, [originalUrl]);
 
-  if (!originalUrl) {
+  if (isFetched && !originalUrl) {
     return <Navigate replace to="/url/404" />;
   }
 
   return (
-    <h1>
-      the short url "{shortUrl}" should lead to the full url "{originalUrl}"
-    </h1>
+    <div className="flex h-full flex-col justify-center">
+      <div className="flex flex-col items-center gap-5 rounded-lg bg-gray-100 px-6 py-12">
+        <picture>
+          <img
+            aria-label="Brev.ly logo icon"
+            className="h-20"
+            height={48}
+            src={logoIconUrl}
+            width={48}
+          />
+        </picture>
+
+        <h2 className="font-xl-bold">Redirecionando...</h2>
+
+        <span className="text-center font-base-semibold text-gray-500">
+          O link será aberto automaticamente em alguns instantes.
+          {!!originalUrl && (
+            <>
+              <br />
+              Não foi redirecionado?{' '}
+              <Link className="text-blue-base underline" to={originalUrl}>
+                Acesse aqui
+              </Link>
+            </>
+          )}
+        </span>
+      </div>
+    </div>
   );
 }
