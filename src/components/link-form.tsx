@@ -53,7 +53,7 @@ export function LinkForm() {
   };
 
   return (
-    <div className="flex flex-col gap-5 rounded-lg bg-gray-100 p-6">
+    <div className="flex flex-col gap-5 rounded-lg bg-gray-100 p-6 sm:p-8 max-h-fit">
       <h2 className="font-lg-bold">Novo link</h2>
 
       <form className="flex flex-col gap-5" onSubmit={handleSubmit(onSubmit)}>

@@ -91,7 +91,7 @@ export function LinksList() {
     <div className="flex flex-col overflow-hidden rounded-lg">
       {(isFetching || isSavingUrl) && <LinearLoader />}
 
-      <div className="flex flex-col gap-4 overflow-hidden bg-gray-100 p-6">
+      <div className="flex flex-col gap-4 overflow-hidden bg-gray-100 p-6 sm:p-8">
         <header className="flex justify-between">
           <h2 className="font-lg-bold">Meus links</h2>
 
