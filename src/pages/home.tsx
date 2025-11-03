@@ -5,7 +5,7 @@ import { LinksProvider } from '../hooks/use-links';
 
 export function HomePage() {
   return (
-    <div className="flex h-full flex-col items-center sm:items-start gap-6 max-w-[980px] m-auto">
+    <div className="flex h-full flex-col items-center sm:items-start gap-6">
       <picture>
         <img
           aria-label="Brev.ly logo (icon and name)"

@@ -15,7 +15,7 @@ createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
-        <div className="h-dvh px-3 py-8">
+        <div className="h-dvh px-3 py-8 max-w-[980px] m-auto">
           <Routes>
             <Route element={<HomePage />} index />
             <Route element={<RedirectPage />} path="/:url-encurtada" />

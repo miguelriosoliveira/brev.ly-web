@@ -3,8 +3,8 @@ import notFoundStatusUrl from '../assets/404.svg';
 
 export function NotFoundPage() {
   return (
-    <div className="flex h-full flex-col justify-center">
-      <div className="flex flex-col items-center gap-5 rounded-lg bg-gray-100 px-6 py-12">
+    <div className="flex h-full flex-col justify-center max-w-[580px] m-auto">
+      <div className="flex flex-col items-center gap-5 rounded-lg bg-gray-100 px-6 sm:px-12 py-12 sm:py-16">
         <picture>
           <img
             aria-label="image containing the number 404"
