@@ -11,7 +11,6 @@ const LINK_SCHEMA = z.object({
   access_count: z.number(),
   created_at: z.coerce.date(),
 });
-type ApiLink = z.infer<typeof LINK_SCHEMA>;
 
 const LINKS_PAGE_SCHEMA = z.object({
   items: z.array(LINK_SCHEMA),
@@ -39,18 +38,43 @@ const FILENAME_REGEX = /filename="?([^"]+)"?/;
 const ORIGINAL_URL_SCHEMA = z.object({
   original_url: LINK_SCHEMA.shape.original_url,
 });
-type ApiOriginalUrlResponse = z.infer<typeof ORIGINAL_URL_SCHEMA>;
+
+const DELETED_URL_SCHEMA = z.object({
+  id: LINK_SCHEMA.shape.id,
+});
 
 const apiFetch = axios.create({
   baseURL: env.VITE_BACKEND_URL,
   headers: { 'Content-Type': 'application/json' },
 });
 
+async function handleFetch<T>(
+	fetchFunction: () => Promise<{data: unknown}>,
+	schemaParser: z.ZodType<T>
+): Promise<T> {
+	try {
+      const { data } = await fetchFunction();
+      return schemaParser.parse(data);
+    } catch (error) {
+      const axiosErr = error as AxiosError<ApiError>;
+      if (axiosErr.response?.data) {
+        const parsed = ERROR_SCHEMA.safeParse(axiosErr.response.data);
+        if (!parsed.success) {
+          throw ErrorCodes.UNKNOWN_ERROR;
+        }
+        throw ErrorCodes[parsed.data.error_code] || ErrorCodes.UNKNOWN_ERROR;
+      }
+      throw error;
+    }
+}
+
 export const api = {
   async getLinks(cursor?: string): Promise<LinksPage> {
-    const { data } = await apiFetch.get('/urls', { params: { cursor: cursor || undefined } });
-    const response = LINKS_PAGE_SCHEMA.parse(data);
-    return {
+		const response = await handleFetch(
+			() => apiFetch.get('/urls', { params: { cursor: cursor || undefined } }),
+			LINKS_PAGE_SCHEMA,
+		);
+		return {
       items: response.items.map(link => ({
         id: link.id,
         originalUrl: link.original_url,
@@ -64,30 +88,17 @@ export const api = {
   },
 
   async createLink({ original_url, short_url }: CreateLinkRequest): Promise<ShortenedLink> {
-    try {
-      const response = await apiFetch.post<ApiLink[]>('/urls', {
-        original_url,
-        short_url,
-      });
-      const newLink = LINK_SCHEMA.parse(response.data);
-      return {
+		const newLink = await handleFetch(
+			() => apiFetch.post('/urls', {original_url,short_url,}),
+			LINK_SCHEMA,
+		);
+		return {
         id: newLink.id,
         originalUrl: newLink.original_url,
         shortUrl: newLink.short_url,
         accessCount: newLink.access_count,
         createdAt: newLink.created_at,
       };
-    } catch (error) {
-      const axiosErr = error as AxiosError<ApiError>;
-      if (axiosErr.response?.data) {
-        const parsed = ERROR_SCHEMA.safeParse(axiosErr.response.data);
-        if (!parsed.success) {
-          throw ErrorCodes.UNKNOWN_ERROR;
-        }
-        throw ErrorCodes[parsed.data.error_code] || ErrorCodes.UNKNOWN_ERROR;
-      }
-      throw error;
-    }
   },
 
   async downloadCsv() {
@@ -113,20 +124,19 @@ export const api = {
   },
 
   async getOriginalUrl(shortUrl: string): Promise<string> {
-    try {
-      const { data } = await apiFetch.get<ApiOriginalUrlResponse>(`/urls/${shortUrl}`);
-      const { original_url } = ORIGINAL_URL_SCHEMA.parse(data);
-      return original_url;
-    } catch (error) {
-      const axiosErr = error as AxiosError<ApiError>;
-      if (axiosErr.response?.data) {
-        const parsed = ERROR_SCHEMA.safeParse(axiosErr.response.data);
-        if (!parsed.success) {
-          throw ErrorCodes.UNKNOWN_ERROR;
-        }
-        throw ErrorCodes[parsed.data.error_code] || ErrorCodes.UNKNOWN_ERROR;
-      }
-      throw error;
-    }
+		const response = await handleFetch(
+			() => apiFetch.get(`/urls/${shortUrl}`),
+			ORIGINAL_URL_SCHEMA,
+		);
+		return response.original_url;
+  },
+
+	async deleteUrl(shortUrl: string): Promise<string> {
+		const response = await handleFetch(
+			() => apiFetch.delete(`/urls/${shortUrl}`),
+			DELETED_URL_SCHEMA,
+		);
+		return response.id;
   },
 };
+
