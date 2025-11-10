@@ -1,4 +1,10 @@
-import { useInfiniteQuery, useIsMutating, useQuery } from '@tanstack/react-query';
+import {
+  useInfiniteQuery,
+  useIsMutating,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from '@tanstack/react-query';
 import { useEffect, useRef } from 'react';
 import { useLinks } from '../hooks/use-links';
 import { Download } from '../icons/download';
@@ -13,7 +19,7 @@ import { LinkItem } from './link-item';
 
 export function LinksList() {
   const { removeLink } = useLinks();
-  const mutationCount = useIsMutating();
+  const queryClient = useQueryClient();
   const { data, fetchNextPage, hasNextPage, isFetching, isFetchingNextPage, isFetched } =
     useInfiniteQuery({
       queryKey: ['links'],
@@ -25,6 +31,19 @@ export function LinksList() {
     enabled: false,
     queryKey: ['download'],
     queryFn: api.downloadCsv,
+  });
+  const mutationCount = useIsMutating();
+  const mutation = useMutation({
+    mutationFn(shortUrl: string) {
+      return api.deleteUrl(shortUrl);
+    },
+    onSuccess(linkId) {
+      removeLink(linkId);
+      queryClient.invalidateQueries({ queryKey: ['links'] });
+    },
+    onError() {
+      notify({ type: 'error', title: 'Eita!', text: 'Erro ao deletar link.' });
+    },
   });
 
   const isSavingUrl = mutationCount > 0;
@@ -81,10 +100,8 @@ export function LinksList() {
     });
   }
 
-  // FIXME
   function handleDeleteLink(shortUrl: string) {
-    const linkId = api.deleteLink(shortUrl);
-    removeLink(linkId);
+    mutation.mutate(shortUrl);
   }
 
   return (
@@ -106,7 +123,7 @@ export function LinksList() {
         </header>
 
         <main
-          className="scrollbar scrollbar-thumb-blue-base flex flex-col items-center overflow-auto text-gray-500"
+          className="scrollbar scrollbar-thumb-blue-base flex flex-col items-center overflow-auto pr-1.5 text-gray-500"
           ref={scrollRootRef}
         >
           {isFetched ? (
